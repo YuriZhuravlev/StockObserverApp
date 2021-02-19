@@ -1,6 +1,7 @@
-package com.zhuravlev.stockobserverapp
+package com.zhuravlev.stockobserverapp.ui.activity
 
 import android.os.Bundle
+import com.zhuravlev.stockobserverapp.R
 import moxy.MvpAppCompatActivity
 
 class MainActivity : MvpAppCompatActivity() {

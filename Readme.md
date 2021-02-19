@@ -1,0 +1,1 @@
+An android app uses api finnhub.io

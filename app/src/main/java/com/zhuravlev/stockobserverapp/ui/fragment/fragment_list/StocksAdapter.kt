@@ -2,6 +2,7 @@ package com.zhuravlev.stockobserverapp.ui.fragment.fragment_list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
@@ -16,25 +17,30 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
     }
 
     override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
+        val context = holder.view.context
+        if ((position % 2) == 0) {
+            holder.view.background = ContextCompat.getDrawable(context, R.drawable.background_item)
+        }
         with(mList[position]) {
             holder.title.text = this.title
             holder.description.text = this.description
             holder.price.text = this.price
             holder.changePrice.text = this.changePrice
-            if (this.star) {
-                holder.star.setColorFilter(R.color.gold)
-            }
+            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             holder.star.setOnClickListener {
-                if (this.star) {
-                    this.star = false
-                    holder.star.setColorFilter(R.color.white)
-                } else {
-                    this.star = true
-                    holder.star.setColorFilter(R.color.gold)
-                }
+                this.star = !this.star
+                holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             }
         }
 
+    }
+
+    private fun getColorId(star: Boolean): Int {
+        return if (star) {
+            R.color.yellow
+        } else {
+            R.color.grey
+        }
     }
 
     override fun getItemCount(): Int {

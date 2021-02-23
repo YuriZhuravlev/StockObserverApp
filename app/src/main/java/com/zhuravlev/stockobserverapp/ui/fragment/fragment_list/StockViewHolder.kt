@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
 
 class StockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val view = itemView
     val title = itemView.findViewById<TextView>(R.id.item_stock_title)
     val description = itemView.findViewById<TextView>(R.id.item_stock_description)
     val image = itemView.findViewById<ImageView>(R.id.item_stock_image)

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="app_margin">5dp</dimen>
+    <dimen name="app_margin">8dp</dimen>
+    <dimen name="title_margin">14dp</dimen>
+    <dimen name="item_end_margin">10dp</dimen>
 </resources>

@@ -28,7 +28,7 @@ class MainActivity : MvpAppCompatActivity() {
             } else {
                 tab.text = "Favourites"
             }
-        }
+        }.attach()
     }
 
     override fun setSupportActionBar(toolbar: androidx.appcompat.widget.Toolbar?) {

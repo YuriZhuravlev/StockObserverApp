@@ -34,8 +34,4 @@ class MainActivity : MvpAppCompatActivity() {
     override fun setSupportActionBar(toolbar: androidx.appcompat.widget.Toolbar?) {
         super.setSupportActionBar(mToolbar)
     }
-
-    override fun onResume() {
-        super.onResume()
-    }
 }

@@ -8,14 +8,15 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val SERVER_URL = "https://finnhub.io/api/v1"
+const val SERVER_URL = "https://finnhub.io/api/v1/"
+const val WEB_SOCKET_URL = "wss://ws.finnhub.io"
 const val TOKEN = "c0nukbv48v6qah6ron2g"
 
-private var okHttpClient = OkHttpClient()
+private val okHttpClient = OkHttpClient()
 private var retrofit: Retrofit? = null
-private val request: Request = Request.Builder().build()
+private val request: Request = Request.Builder().url("$WEB_SOCKET_URL?token=$TOKEN").build()
 private var webSocket: WebSocket? = null
-private var gson = Gson()
+private val gson = Gson()
 private var api: FinnhubApi? = null
 
 fun getOkHttpClient(): OkHttpClient {

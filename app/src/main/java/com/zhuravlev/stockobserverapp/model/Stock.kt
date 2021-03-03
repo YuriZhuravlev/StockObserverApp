@@ -5,9 +5,9 @@ package com.zhuravlev.stockobserverapp.model
  */
 data class Stock(
     val title: String,
-    val imageUrl: String,
+    var imageUrl: String,
     val description: String,
     var star: Boolean,
-    val price: String,
-    val changePrice: String
+    var price: String,
+    var changePrice: String
 )

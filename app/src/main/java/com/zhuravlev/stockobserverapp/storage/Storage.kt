@@ -3,6 +3,7 @@ package com.zhuravlev.stockobserverapp.storage
 import com.zhuravlev.stockobserverapp.model.Profile
 import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbol
 import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbolsFromExchange
+import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.net.TOKEN
 import com.zhuravlev.stockobserverapp.storage.net.getApiService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -20,7 +21,7 @@ class Storage {
 
     fun getStocksFromExchange(
         exchange: String,
-        onSuccess: (ResponseSearchSymbolsFromExchange) -> Unit,
+        onSuccess: (List<ResponseSearchSymbolsFromExchange>) -> Unit,
         onError: (Throwable) -> Unit
     ) {
         getApiService().getStockSymbolFromExchange(exchange, TOKEN).request(onSuccess, onError)
@@ -31,6 +32,25 @@ class Storage {
         onError: (Throwable) -> Unit
     ) {
         getApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
+    }
+
+    fun getStocks(
+        onSuccess: (List<Stock>) -> Unit,
+        onError: (Throwable) -> Unit
+    ): MutableList<Stock> {
+        val list = mutableListOf<Stock>()
+        getStocksFromExchange("V", {
+            it.forEach { item ->
+                list.add(Stock(item.symbol!!, "", item.description!!, false, "", ""))
+            }
+            list.forEach { company ->
+                getProfile(company.title, { profile ->
+                    company.imageUrl = profile.logo.toString()
+                }, { onError(it) })
+            }
+            onSuccess(list)
+        }, onError = { onError(it) })
+        return list
     }
 }
 

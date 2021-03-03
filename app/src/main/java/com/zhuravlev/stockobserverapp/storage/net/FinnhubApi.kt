@@ -22,12 +22,12 @@ interface FinnhubApi {
      *
      * [CHECK LIST](https://docs.google.com/spreadsheets/d/1I3pBxjfXB056-g_JYf_6o3Rns3BV2kMGG1nCatb91ls/edit#gid=0)
      */
-    @GET("search")
+    @GET("stock/symbol")
     fun getStockSymbolFromExchange(
         @Query("exchange") exchange: String,
         @Query("token") token: String
-    ): Single<ResponseSearchSymbolsFromExchange>
+    ): Single<List<ResponseSearchSymbolsFromExchange>>
 
-    @GET("profile2")
+    @GET("stock/profile2")
     fun getCompany(@Query("symbol") symbol: String, @Query("token") token: String): Single<Profile>
 }

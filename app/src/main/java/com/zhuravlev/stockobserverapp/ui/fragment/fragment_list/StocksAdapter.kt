@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 
@@ -26,6 +27,14 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
             holder.description.text = this.description
             holder.price.text = this.price
             holder.changePrice.text = this.changePrice
+
+            if (this.imageUrl.isNotEmpty()) {
+                Picasso.get()
+                    .load(this.imageUrl)
+                    .resize(52, 52)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(holder.image)
+            }
             holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             holder.star.setOnClickListener {
                 this.star = !this.star

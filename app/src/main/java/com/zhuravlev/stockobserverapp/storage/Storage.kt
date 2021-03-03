@@ -40,12 +40,14 @@ class Storage {
     ): MutableList<Stock> {
         val list = mutableListOf<Stock>()
         getStocksFromExchange("V", {
-            it.forEach { item ->
-                list.add(Stock(item.symbol!!, "", item.description!!, false, "", ""))
+            for (i in 0..100) {
+                list.add(Stock(it[i].symbol!!, "", it[i].description!!, false, "", ""))
             }
-            list.forEach { company ->
-                getProfile(company.title, { profile ->
-                    company.imageUrl = profile.logo.toString()
+            for (i in 0..list.lastIndex) {
+                getProfile(list[i].title, { profile ->
+                    if (profile.logo != null) {
+                        list[i].imageUrl = profile.logo
+                    }
                 }, { onError(it) })
             }
             onSuccess(list)

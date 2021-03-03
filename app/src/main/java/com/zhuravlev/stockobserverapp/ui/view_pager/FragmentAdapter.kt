@@ -43,9 +43,8 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
-        val list = listOf<Stock>()
         Storage().getStocks({
-            holder.recyclerView.adapter = StocksAdapter(list)
+            holder.recyclerView.adapter = StocksAdapter(it)
         }, {
             // todo
             it.printStackTrace()

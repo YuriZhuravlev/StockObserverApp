@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 const val SERVER_URL = "https://finnhub.io/api/v1/"
 const val WEB_SOCKET_URL = "wss://ws.finnhub.io"
-const val TOKEN = "c0nukbv48v6qah6ron2g"
+const val TOKEN = "c118csf48v6tj8r9aq5g"
 
 private val okHttpClient = OkHttpClient()
 private var retrofit: Retrofit? = null

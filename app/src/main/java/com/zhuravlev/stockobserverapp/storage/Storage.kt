@@ -34,21 +34,27 @@ class Storage {
         getApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
     }
 
+    fun getLogo(symbol: String): String {
+        return "https://finnhub.io/api/logo?symbol=$symbol"
+    }
+
     fun getStocks(
         onSuccess: (List<Stock>) -> Unit,
         onError: (Throwable) -> Unit
     ): MutableList<Stock> {
         val list = mutableListOf<Stock>()
-        getStocksFromExchange("V", {
-            for (i in 0..100) {
-                list.add(Stock(it[i].symbol!!, "", it[i].description!!, false, "", ""))
-            }
-            for (i in 0..list.lastIndex) {
-                getProfile(list[i].title, { profile ->
-                    if (profile.logo != null) {
-                        list[i].imageUrl = profile.logo
-                    }
-                }, { onError(it) })
+        getStocksFromExchange("ME", {
+            for (i in 0..it.lastIndex) {
+                list.add(
+                    Stock(
+                        it[i].symbol!!,
+                        getLogo(it[i].symbol!!),
+                        it[i].description!!,
+                        false,
+                        "",
+                        ""
+                    )
+                )
             }
             onSuccess(list)
         }, onError = { onError(it) })

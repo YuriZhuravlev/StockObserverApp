@@ -31,7 +31,7 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
             if (this.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(this.imageUrl)
-                    .resize(52, 52)
+//                    .resize(52, 52)
                     .error(R.drawable.ic_launcher_foreground)
                     .into(holder.image)
             }

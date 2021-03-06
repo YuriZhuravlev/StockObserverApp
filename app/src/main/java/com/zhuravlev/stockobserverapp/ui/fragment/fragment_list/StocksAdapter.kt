@@ -32,7 +32,7 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
                 Picasso.get()
                     .load(this.imageUrl)
 //                    .resize(52, 52)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_factory)
                     .into(holder.image)
             }
             holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))

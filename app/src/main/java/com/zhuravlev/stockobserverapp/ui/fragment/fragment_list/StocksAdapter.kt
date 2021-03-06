@@ -23,7 +23,7 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
             holder.view.background = ContextCompat.getDrawable(context, R.drawable.background_item)
         }
         with(mList[position]) {
-            holder.title.text = this.title
+            holder.title.text = this.symbol
             holder.description.text = this.description
             holder.price.text = this.price
             holder.changePrice.text = this.changePrice
@@ -54,5 +54,17 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
 
     override fun getItemCount(): Int {
         return mList.size
+    }
+
+    fun updatePrice(map: Map<String, Pair<String, String>>) {
+        for (i in 0..mList.lastIndex) {
+            if (map.containsKey(mList[i].symbol)) {
+                val pair = map[mList[i].symbol]!!
+                mList[i].price = pair.first
+                mList[i].changePrice =
+                    (pair.first.toDouble() - pair.second.toDouble()).toString()
+                notifyItemChanged(i)
+            }
+        }
     }
 }

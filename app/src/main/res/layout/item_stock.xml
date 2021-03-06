@@ -11,7 +11,7 @@
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_margin="@dimen/app_margin"
-        android:src="@drawable/abc_vector_test"
+        android:src="@drawable/ic_factory"
         android:cropToPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

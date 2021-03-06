@@ -4,8 +4,11 @@ import com.zhuravlev.stockobserverapp.model.Profile
 import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbol
 import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbolsFromExchange
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
+import com.zhuravlev.stockobserverapp.storage.net.EXCHANGE_POSTFIX_FINNHUB
 import com.zhuravlev.stockobserverapp.storage.net.TOKEN
-import com.zhuravlev.stockobserverapp.storage.net.getApiService
+import com.zhuravlev.stockobserverapp.storage.net.getFinnhubApiService
+import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -16,7 +19,7 @@ class Storage {
         onSuccess: (ResponseSearchSymbol) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        getApiService().getSymbolLookup(symbol, TOKEN).request(onSuccess, onError)
+        getFinnhubApiService().getSymbolLookup(symbol, TOKEN).request(onSuccess, onError)
     }
 
     fun getStocksFromExchange(
@@ -24,18 +27,34 @@ class Storage {
         onSuccess: (List<ResponseSearchSymbolsFromExchange>) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        getApiService().getStockSymbolFromExchange(exchange, TOKEN).request(onSuccess, onError)
+        getFinnhubApiService().getStockSymbolFromExchange(exchange, TOKEN)
+            .request(onSuccess, onError)
     }
 
     fun getProfile(
         symbol: String, onSuccess: (Profile) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        getApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
+        getFinnhubApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
     }
 
     fun getLogo(symbol: String): String {
         return "https://finnhub.io/api/logo?symbol=$symbol"
+    }
+
+    fun getCurrentPrices(
+        onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        getMoexApiService().getPriceAllStocksLastDate("0").request(
+            { item1 ->
+                getMoexApiService().getPriceAllStocksLastDate("100").request({ item2 ->
+                    getMoexApiService().getPriceAllStocksLastDate("200").request({ item3 ->
+                        onSuccess(listOf(item1, item2, item3))
+                    }, onError)
+                }, onError)
+            }, onError
+        )
     }
 
     fun getStocks(
@@ -47,7 +66,7 @@ class Storage {
             for (i in 0..it.lastIndex) {
                 list.add(
                     Stock(
-                        it[i].symbol!!,
+                        it[i].symbol!!.removeSuffix(EXCHANGE_POSTFIX_FINNHUB),
                         getLogo(it[i].symbol!!),
                         it[i].description!!,
                         false,

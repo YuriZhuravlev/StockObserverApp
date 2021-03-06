@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponsePriceAllStocksByDate
 import com.zhuravlev.stockobserverapp.storage.Storage
 import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.StocksAdapter
 
@@ -44,7 +45,23 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
         Storage().getStocks({
-            holder.recyclerView.adapter = StocksAdapter(it)
+            holder.adapter = StocksAdapter(it)
+            holder.recyclerView.adapter = holder.adapter
+            Storage().getCurrentPrices({ priceList ->
+                priceList.forEach { item ->
+                    holder.adapter.updatePrice(parseResponsePriceAllStocksByDate(item))
+//                    it.forEach {
+//                        if (map.containsKey(it.symbol)) {
+//                            val pair = map[it.symbol]!!
+//                            it.price = pair.first
+//                            it.changePrice =
+//                                (pair.first.toDouble() - pair.second.toDouble()).toString()
+//                        }
+//                    }
+                }
+            }, {
+                it.printStackTrace()
+            })
         }, {
             // todo
             it.printStackTrace()

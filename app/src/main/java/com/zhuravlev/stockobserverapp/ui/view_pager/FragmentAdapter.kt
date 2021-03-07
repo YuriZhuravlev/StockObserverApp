@@ -36,11 +36,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
-        val list = listOf<Stock>(
-            Stock("AAAA", "", "AAAA technology corp", true, "$9999.24", "+4.84%"),
-            Stock("AAAB", "", "AAAB agronom kolhoz", true, "₽124.06", "+0.5")
-        )
-        holder.recyclerView.adapter = StocksAdapter(list)
+//TODO
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {

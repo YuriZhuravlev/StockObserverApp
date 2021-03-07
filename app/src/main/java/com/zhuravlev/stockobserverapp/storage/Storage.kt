@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
+    private lateinit var mFavourites: MutableList<Stock>
 
     init {
         instance = this
@@ -23,6 +24,9 @@ class Storage(applicationContext: Context) {
             applicationContext,
             AppDatabase::class.java, "database-stock-observer"
         ).build()
+        mDatabase.stockDao().getFavouritesStocks().subscribe {
+            mFavourites = it
+        }
     }
 
     companion object {
@@ -127,6 +131,22 @@ class Storage(applicationContext: Context) {
                 saveStocks(it)
             }
         }
+    }
+
+    fun addFavourite(stock: Stock): Boolean {
+        return if (mFavourites.contains(stock)) {
+            false
+        } else {
+            mDatabase.stockDao().update(stock)
+            true
+        }
+    }
+
+    fun getFavouritesStocks() = mFavourites
+
+    fun removeFavourite(stock: Stock) {
+        mFavourites.remove(stock)
+        mDatabase.stockDao().update(stock)
     }
 }
 

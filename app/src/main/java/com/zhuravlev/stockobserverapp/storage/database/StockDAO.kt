@@ -25,4 +25,7 @@ interface StockDAO {
 
     @Query("SELECT * FROM stock ORDER BY stock.symbol")
     fun getStocks(): Flowable<List<Stock>>
+
+    @Query("SELECT * FROM stock WHERE stock.star == :star")
+    fun getFavouritesStocks(star: Boolean = true): Flowable<MutableList<Stock>>
 }

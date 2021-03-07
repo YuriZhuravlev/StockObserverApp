@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.storage.Storage
 
 class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>() {
     private val mList = list
@@ -52,6 +53,11 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
             holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             holder.star.setOnClickListener {
                 this.star = !this.star
+                if (this.star) {
+                    Storage.instance?.addFavourite(this)
+                } else {
+                    Storage.instance?.removeFavourite(this)
+                }
                 holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             }
             holder.view.setOnClickListener { }

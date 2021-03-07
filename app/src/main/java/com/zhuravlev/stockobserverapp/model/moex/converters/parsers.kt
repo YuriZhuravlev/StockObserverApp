@@ -1,6 +1,10 @@
 package com.zhuravlev.stockobserverapp.model.moex.converters
 
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.Callable
 
 /*
                 0           1           2           3           4           5       6       7   8           9                   10      11      12          13                  14          15                  16          17                          18              19      20
@@ -12,13 +16,19 @@ import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
  * Парсинг результата, сейчас берутся цены на момент открытия и закрытия биржи - эта пара кладётся по symbol акции
  * @return Map<symbol, Pair<openPrice, closePrice>>
  */
-fun parseResponsePriceAllStocksByDate(response: ResponsePriceAllStocksByDate): Map<String, Pair<String, String>> {
-    val map = mutableMapOf<String, Pair<String, String>>()
-//    response.history?.data?.forEach {
-//        if (it != null) {
-//            val list = it.replace("\"", "").split(", ")
-//            map[list[3]] = Pair(list[6], list[11])
-//        }
-//    }
-    return map
+fun parseResponsePriceAllStocksByDate(response: List<ResponsePriceAllStocksByDate>): Single<Map<String, Pair<String, String>>> {
+    return Single.fromCallable(Callable {
+        val map = mutableMapOf<String, Pair<String, String>>()
+        response.forEach {
+            if (it.history != null) {
+                it.history.forEach { historyItem ->
+                    if (historyItem != null && historyItem.symbol != null && historyItem.open != null && historyItem.close != null) {
+                        map[historyItem.symbol] = Pair(historyItem.open, historyItem.close)
+                    }
+                }
+            }
+        }
+        return@Callable map.toMap()
+    }).subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

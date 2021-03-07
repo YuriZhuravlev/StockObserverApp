@@ -44,21 +44,15 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
-        Storage().getStocks({
+        Storage().getStocks({ it ->
             holder.adapter = StocksAdapter(it)
             holder.recyclerView.adapter = holder.adapter
             Storage().getCurrentPrices({ priceList ->
-                priceList.forEach { item ->
-                    holder.adapter.updatePrice(parseResponsePriceAllStocksByDate(item))
-//                    it.forEach {
-//                        if (map.containsKey(it.symbol)) {
-//                            val pair = map[it.symbol]!!
-//                            it.price = pair.first
-//                            it.changePrice =
-//                                (pair.first.toDouble() - pair.second.toDouble()).toString()
-//                        }
-//                    }
-                }
+                parseResponsePriceAllStocksByDate(priceList).subscribe({ map ->
+                    holder.adapter.updatePrice(map)
+                }, {
+                    it.printStackTrace()
+                })
             }, {
                 it.printStackTrace()
             })

@@ -15,16 +15,16 @@ interface MoexApi {
         @Query("date") date: String,
         @Query("start") start: String = "0",
         @Query("limit") limit: String = "100",
-        @Query("iss.json") json: String = "compact",
+        @Query("iss.json") json: String = "extended",
         @Query("iss.meta") meta: String = "off"
-    ): ResponsePriceAllStocksByDate
+    ): Single<List<ResponsePriceAllStocksByDate>>
 
     // history/engines/stock/markets/shares/boards/tqbr/securities.json?iss.meta=off&iss.json=compact&start=100&limit=5
     @GET("history/engines/stock/markets/shares/boards/tqbr/securities.json")
     fun getPriceAllStocksLastDate(
         @Query("start") start: String = "0",
         @Query("limit") limit: String = "100",
-        @Query("iss.json") json: String = "compact",
+        @Query("iss.json") json: String = "extended",
         @Query("iss.meta") meta: String = "off"
-    ): Single<ResponsePriceAllStocksByDate>
+    ): Single<List<ResponsePriceAllStocksByDate>>
 }

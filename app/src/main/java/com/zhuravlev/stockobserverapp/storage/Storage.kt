@@ -50,7 +50,7 @@ class Storage {
             { item1 ->
                 getMoexApiService().getPriceAllStocksLastDate("100").request({ item2 ->
                     getMoexApiService().getPriceAllStocksLastDate("200").request({ item3 ->
-                        onSuccess(listOf(item1, item2, item3))
+                        onSuccess(item1 + item2 + item3)
                     }, onError)
                 }, onError)
             }, onError

@@ -24,8 +24,16 @@ fun parseResponsePriceAllStocksByDate(response: List<ResponsePriceAllStocksByDat
         response.forEach {
             if (it.history != null) {
                 it.history.forEach { historyItem ->
-                    if (historyItem != null && historyItem.symbol != null && historyItem.open != null && historyItem.close != null) {
-                        map[historyItem.symbol] = Pair(historyItem.open, historyItem.close)
+                    if (historyItem != null && historyItem.symbol != null) {
+                        if (historyItem.open != null && historyItem.close != null) {
+                            map[historyItem.symbol] = Pair(historyItem.open, historyItem.close)
+                        } else {
+                            if (historyItem.legalClosePrice != null)
+                                map[historyItem.symbol] = Pair(
+                                    historyItem.legalClosePrice,
+                                    historyItem.legalClosePrice
+                                )
+                        }
                     }
                 }
             }

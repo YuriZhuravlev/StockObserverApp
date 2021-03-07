@@ -15,4 +15,8 @@ data class Stock(
     override fun equals(other: Any?): Boolean {
         return this.symbol == (other as Stock).symbol
     }
+
+    override fun hashCode(): Int {
+        return symbol.hashCode()
+    }
 }

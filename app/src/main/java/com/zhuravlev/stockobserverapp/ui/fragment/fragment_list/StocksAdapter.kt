@@ -1,5 +1,6 @@
 package com.zhuravlev.stockobserverapp.ui.fragment.fragment_list
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -21,11 +22,23 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
         val context = holder.view.context
         if ((position % 2) == 0) {
             holder.view.background = ContextCompat.getDrawable(context, R.drawable.background_item)
+        } else {
+            holder.view.background =
+                ContextCompat.getDrawable(context, R.drawable.background_white_item)
         }
         with(mList[position]) {
             holder.title.text = this.symbol
             holder.description.text = this.description
             holder.price.text = this.price
+            try {
+                if (this.changePrice[0] == '-') {
+                    holder.changePrice.setTextColor(Color.RED)
+                } else {
+                    holder.changePrice.setTextColor(Color.GREEN)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             holder.changePrice.text = this.changePrice
 
             if (this.imageUrl.isNotEmpty()) {
@@ -40,6 +53,7 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
                 this.star = !this.star
                 holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             }
+            holder.view.setOnClickListener { }
         }
 
     }
@@ -61,8 +75,10 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
             if (map.containsKey(mList[i].symbol)) {
                 val pair = map[mList[i].symbol]!!
                 mList[i].price = pair.first
-                mList[i].changePrice =
-                    (pair.first.toDouble() - pair.second.toDouble()).toString()
+                mList[i].changePrice = String.format(
+                    "%.2f",
+                    (pair.first.toDouble() - pair.second.toDouble())
+                )
                 notifyItemChanged(i)
             }
         }

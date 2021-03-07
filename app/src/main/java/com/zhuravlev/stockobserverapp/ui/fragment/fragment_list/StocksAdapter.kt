@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.storage.Storage
 
 class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>() {
     private val mList = list
@@ -83,5 +84,6 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
                 notifyItemChanged(i)
             }
         }
+        Storage.instance?.saveStocks(mList)
     }
 }

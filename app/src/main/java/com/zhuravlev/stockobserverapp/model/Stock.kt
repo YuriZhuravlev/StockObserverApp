@@ -1,9 +1,11 @@
 package com.zhuravlev.stockobserverapp.model
 
-/**
- * Прототип класса, потом решу как организовать работу с сервером
- */
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "stock")
 data class Stock(
+    @PrimaryKey
     val symbol: String,
     var imageUrl: String,
     val description: String,

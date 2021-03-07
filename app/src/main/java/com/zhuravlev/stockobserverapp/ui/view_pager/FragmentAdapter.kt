@@ -2,6 +2,7 @@ package com.zhuravlev.stockobserverapp.ui.view_pager
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
@@ -44,21 +45,22 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
-        Storage().getStocks({ it ->
+        Storage.instance?.getStocks({ it ->
             holder.adapter = StocksAdapter(it)
             holder.recyclerView.adapter = holder.adapter
-            Storage().getCurrentPrices({ priceList ->
+            Storage.instance?.getCurrentPrices({ priceList ->
                 parseResponsePriceAllStocksByDate(priceList).subscribe({ map ->
                     holder.adapter.updatePrice(map)
                 }, {
                     it.printStackTrace()
                 })
-            }, {
-                it.printStackTrace()
+            }, { list: List<Stock>, throwable: Throwable ->
+                Toast.makeText(item.context, throwable.message, Toast.LENGTH_SHORT).show()
             })
-        }, {
-            // todo
-            it.printStackTrace()
+        }, { list: List<Stock>, throwable: Throwable ->
+            holder.adapter = StocksAdapter(list)
+            holder.recyclerView.adapter = holder.adapter
+            Toast.makeText(item.context, throwable.message, Toast.LENGTH_SHORT).show()
         })
     }
 

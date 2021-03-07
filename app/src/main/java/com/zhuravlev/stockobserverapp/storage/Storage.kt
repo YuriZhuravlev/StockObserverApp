@@ -1,11 +1,14 @@
 package com.zhuravlev.stockobserverapp.storage
 
+import android.content.Context
+import androidx.room.Room
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.finnhub.Profile
 import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbol
 import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbolsFromExchange
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
+import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
 import com.zhuravlev.stockobserverapp.storage.net.TOKEN
 import com.zhuravlev.stockobserverapp.storage.net.getFinnhubApiService
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
@@ -13,11 +16,25 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class Storage {
+class Storage(applicationContext: Context) {
+    private val mDatabase: AppDatabase
+
+    init {
+        instance = this
+        mDatabase = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "database-stock-observer"
+        ).build()
+    }
+
+    companion object {
+        var instance: Storage? = null
+    }
+
     fun searchSymbol(
         symbol: String,
         onSuccess: (ResponseSearchSymbol) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (List<Stock>, Throwable) -> Unit
     ) {
         getFinnhubApiService().getSymbolLookup(symbol, TOKEN).request(onSuccess, onError)
     }
@@ -25,7 +42,7 @@ class Storage {
     fun getStocksFromExchange(
         exchange: String,
         onSuccess: (List<ResponseSearchSymbolsFromExchange>) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (List<Stock>, Throwable) -> Unit
     ) {
         getFinnhubApiService().getStockSymbolFromExchange(exchange, TOKEN)
             .request(onSuccess, onError)
@@ -33,7 +50,7 @@ class Storage {
 
     fun getProfile(
         symbol: String, onSuccess: (Profile) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (List<Stock>, Throwable) -> Unit
     ) {
         getFinnhubApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
     }
@@ -44,7 +61,7 @@ class Storage {
 
     fun getCurrentPrices(
         onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (List<Stock>, Throwable) -> Unit
     ) {
         val api = getMoexApiService()
         api.getPriceAllStocksLastDate(start = "0")
@@ -63,7 +80,7 @@ class Storage {
 
     fun getStocks(
         onSuccess: (List<Stock>) -> Unit,
-        onError: (Throwable) -> Unit
+        onError: (List<Stock>, Throwable) -> Unit
     ) {
         val api = getMoexApiService()
         val list = mutableListOf<Stock>()
@@ -90,28 +107,52 @@ class Storage {
             }
         }, onError)
     }
+
+    fun saveStocks(stocks: List<Stock>) {
+        mDatabase.stockDao().insertStocks(stocks)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { }
+    }
+
+    fun loadStocks(onSuccess: (List<Stock>) -> Unit) {
+        mDatabase.stockDao().getStocks()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onSuccess)
+    }
 }
 
-private fun <T> Single<T>.request(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
+private fun <T> Single<T>.request(
+    onSuccess: (T) -> Unit,
+    onError: (List<Stock>, Throwable) -> Unit
+) {
     this.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
-            //TODO("Добавить обёртку для сохранения данных в db")
             onSuccess(it)
         }, {
-            //TODO("Добавить обёртку для данных из db")
-            onError(it)
+            Storage.instance?.getStocks({ list ->
+                onError(list, it)
+            }, { list: List<Stock>, throwable: Throwable ->
+                onError(listOf(), it)
+            })
         })
 }
 
-private fun <T> Single<T>.requestIo(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
+private fun <T> Single<T>.requestIo(
+    onSuccess: (T) -> Unit,
+    onError: (List<Stock>, Throwable) -> Unit
+) {
     this.subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
         .subscribe({
-            //TODO("Добавить обёртку для сохранения данных в db")
             onSuccess(it)
         }, {
-            //TODO("Добавить обёртку для данных из db")
-            onError(it)
+            Storage.instance?.getStocks({ list ->
+                onError(list, it)
+            }, { list: List<Stock>, throwable: Throwable ->
+                onError(listOf(), it)
+            })
         })
 }

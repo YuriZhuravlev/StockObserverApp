@@ -46,32 +46,38 @@ class Storage {
         onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        getMoexApiService().getPriceAllStocksLastDate(start = "0").request(
-            { item1 ->
-                getMoexApiService().getPriceAllStocksLastDate(start = "100").request({ item2 ->
-                    getMoexApiService().getPriceAllStocksLastDate(start = "200").request({ item3 ->
-                        getMoexApiService().getPriceAllStocksLastDate(board = "tqtd")
-                            .request({ item4 ->
-                                getMoexApiService().getPriceAllStocksLastDate(board = "smal")
-                                    .request({ item5 ->
-                                        getMoexApiService().getPriceAllStocksLastDate(board = "tqpi")
-                                            .request({ item6 ->
-                                                getMoexApiService().getPriceAllStocksLastDate(board = "tqte")
-                                                    .request({ item7 ->
-                                                        getMoexApiService().getPriceAllStocksLastDate(
-                                                            board = "tqtf"
-                                                        ).request({ item8 ->
-                                                            onSuccess(item1 + item2 + item3 + item4 + item5 + item6 + item7 + item8)
+        getMoexApiService().getPriceAllStocksLastDate(start = "0")
+            .request(
+                { item1 ->
+                    getMoexApiService().getPriceAllStocksLastDate(start = "100")
+                        .request({ item2 ->
+                            getMoexApiService().getPriceAllStocksLastDate(start = "200")
+                                .request({ item3 ->
+                                    getMoexApiService().getPriceAllStocksLastDate(board = "tqtd")
+                                        .request({ item4 ->
+                                            getMoexApiService().getPriceAllStocksLastDate(board = "smal")
+                                                .request({ item5 ->
+                                                    getMoexApiService().getPriceAllStocksLastDate(
+                                                        board = "tqpi"
+                                                    )
+                                                        .request({ item6 ->
+                                                            getMoexApiService().getPriceAllStocksLastDate(
+                                                                board = "tqte"
+                                                            )
+                                                                .request({ item7 ->
+                                                                    getMoexApiService().getPriceAllStocksLastDate(
+                                                                        board = "tqtf"
+                                                                    ).request({ item8 ->
+                                                                        onSuccess(item1 + item2 + item3 + item4 + item5 + item6 + item7 + item8)
+                                                                    }, onError)
+                                                                }, onError)
                                                         }, onError)
-                                                    }, onError)
-                                            }, onError)
-                                    }, onError)
-                            }, onError)
-//                        onSuccess(item1 + item2 + item3)
-                    }, onError)
-                }, onError)
-            }, onError
-        )
+                                                }, onError)
+                                        }, onError)
+                                }, onError)
+                        }, onError)
+                }, onError
+            )
     }
 
     fun getStocks(

@@ -29,7 +29,8 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
         with(mList[position]) {
             holder.title.text = this.symbol
             holder.description.text = this.description
-            holder.price.text = this.price
+            val text = this.price + " ₽"
+            holder.price.text = text
             try {
                 if (this.changePrice[0] == '-') {
                     holder.changePrice.setTextColor(Color.RED)

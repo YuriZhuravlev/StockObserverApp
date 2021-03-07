@@ -1,4 +1,4 @@
-package com.zhuravlev.stockobserverapp.model
+package com.zhuravlev.stockobserverapp.model.finnhub
 
 import com.google.gson.annotations.SerializedName
 

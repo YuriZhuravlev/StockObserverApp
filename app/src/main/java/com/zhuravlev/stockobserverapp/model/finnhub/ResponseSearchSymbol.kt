@@ -1,8 +1,17 @@
-package com.zhuravlev.stockobserverapp.model
+package com.zhuravlev.stockobserverapp.model.finnhub
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponseSearchSymbolsFromExchange(
+data class ResponseSearchSymbol(
+
+	@field:SerializedName("result")
+	val result: List<ResultItem?>? = null,
+
+	@field:SerializedName("count")
+	val count: Int? = null
+)
+
+data class ResultItem(
 
 	@field:SerializedName("displaySymbol")
 	val displaySymbol: String? = null,
@@ -10,17 +19,8 @@ data class ResponseSearchSymbolsFromExchange(
 	@field:SerializedName("symbol")
 	val symbol: String? = null,
 
-	@field:SerializedName("mic")
-	val mic: String? = null,
-
 	@field:SerializedName("description")
 	val description: String? = null,
-
-	@field:SerializedName("currency")
-	val currency: String? = null,
-
-	@field:SerializedName("figi")
-	val figi: String? = null,
 
 	@field:SerializedName("type")
 	val type: String? = null

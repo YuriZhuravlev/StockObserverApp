@@ -1,9 +1,9 @@
 package com.zhuravlev.stockobserverapp.storage
 
-import com.zhuravlev.stockobserverapp.model.Profile
-import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbol
-import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbolsFromExchange
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.model.finnhub.Profile
+import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbol
+import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbolsFromExchange
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
 import com.zhuravlev.stockobserverapp.storage.net.TOKEN

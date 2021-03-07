@@ -1,8 +1,8 @@
 package com.zhuravlev.stockobserverapp.storage.net
 
-import com.zhuravlev.stockobserverapp.model.Profile
-import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbol
-import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbolsFromExchange
+import com.zhuravlev.stockobserverapp.model.finnhub.Profile
+import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbol
+import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbolsFromExchange
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

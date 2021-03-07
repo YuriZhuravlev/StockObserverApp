@@ -3,6 +3,7 @@ package com.zhuravlev.stockobserverapp.storage.net
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MoexApi {
@@ -20,8 +21,9 @@ interface MoexApi {
     ): Single<List<ResponsePriceAllStocksByDate>>
 
     // history/engines/stock/markets/shares/boards/tqbr/securities.json?iss.meta=off&iss.json=compact&start=100&limit=5
-    @GET("history/engines/stock/markets/shares/boards/tqbr/securities.json")
+    @GET("history/engines/stock/markets/shares/boards/{board_param}/securities.json")
     fun getPriceAllStocksLastDate(
+        @Path("board_param") board: String = "tqbr",
         @Query("start") start: String = "0",
         @Query("limit") limit: String = "100",
         @Query("iss.json") json: String = "extended",

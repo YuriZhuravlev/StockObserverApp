@@ -10,13 +10,18 @@ import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponsePriceAl
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
+import com.zhuravlev.stockobserverapp.utils.RxBus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
     private lateinit var mFavourites: MutableList<Stock>
+    val bus = RxBus()
+    private val fav = PublishSubject.create<MutableList<Stock>>()
 
     init {
         instance = this
@@ -129,24 +134,38 @@ class Storage(applicationContext: Context) {
                     }
                 }
                 saveStocks(it)
+                mDatabase.stockDao().getFavouritesStocks().subscribe {
+                    mFavourites = it
+                    mFavourites.forEach {
+                        bus.send(it)
+                    }
+                }
             }
         }
     }
 
-    fun addFavourite(stock: Stock): Boolean {
-        return if (mFavourites.contains(stock)) {
-            false
-        } else {
+    fun changeFavourite(stock: Stock) {
+        if (stock.star && !mFavourites.contains(stock)) {
+            mFavourites.add(stock)
+            fav.onNext(mFavourites)
             mDatabase.stockDao().update(stock)
-            true
+            bus.send(stock)
+        } else {
+            if (!stock.star && mFavourites.contains(stock)) {
+                mFavourites.remove(stock)
+                fav.onNext(mFavourites)
+                mDatabase.stockDao().update(stock)
+                bus.send(stock)
+            }
         }
     }
 
-    fun getFavouritesStocks() = mFavourites
+    fun getFavouritesStocks(): MutableList<Stock> {
+        return mFavourites
+    }
 
-    fun removeFavourite(stock: Stock) {
-        mFavourites.remove(stock)
-        mDatabase.stockDao().update(stock)
+    fun getFav(): Observable<MutableList<Stock>> {
+        return fav
     }
 }
 

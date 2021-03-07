@@ -36,12 +36,12 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
-//TODO
+        holder.recyclerView.adapter = StocksAdapter(Storage.instance!!.getFavouritesStocks(), true)
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
         Storage.instance?.getStocks({ it ->
-            holder.adapter = StocksAdapter(it)
+            holder.adapter = StocksAdapter(it as MutableList<Stock>)
             holder.recyclerView.adapter = holder.adapter
             Storage.instance?.getCurrentPrices({ map ->
                 holder.adapter.updatePrice(map)
@@ -49,7 +49,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
                 Toast.makeText(item.context, it.message, Toast.LENGTH_SHORT).show()
             })
         }, { list: List<Stock>, throwable: Throwable ->
-            holder.adapter = StocksAdapter(list)
+            holder.adapter = StocksAdapter(list as MutableList<Stock>)
             holder.recyclerView.adapter = holder.adapter
             Toast.makeText(item.context, throwable.message, Toast.LENGTH_SHORT).show()
         })

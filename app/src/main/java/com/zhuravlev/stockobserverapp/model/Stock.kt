@@ -9,5 +9,10 @@ data class Stock(
     val description: String,
     var star: Boolean,
     var price: String,
-    var changePrice: String
-)
+    var changePrice: String,
+    var boardlist: String = ""
+) {
+    override fun equals(other: Any?): Boolean {
+        return this.symbol == (other as Stock).symbol
+    }
+}

@@ -1,6 +1,8 @@
 package com.zhuravlev.stockobserverapp.model.moex.converters
 
+import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
+import com.zhuravlev.stockobserverapp.model.moex.SecuritiesItem
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -31,4 +33,25 @@ fun parseResponsePriceAllStocksByDate(response: List<ResponsePriceAllStocksByDat
         return@Callable map.toMap()
     }).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+}
+
+
+fun parseSecurities(response: List<SecuritiesItem?>): MutableList<Stock> {
+    val list = mutableListOf<Stock>()
+    response.forEach {
+        if (it != null && it.secId != null && it.boardId != null) {
+            list.add(
+                Stock(
+                    it.secId,
+                    "https://finnhub.io/api/logo?symbol=${it.secId}.ME",
+                    it.name ?: it.shortName ?: "",
+                    false,
+                    "",
+                    "",
+                    it.boardId
+                )
+            )
+        }
+    }
+    return list
 }

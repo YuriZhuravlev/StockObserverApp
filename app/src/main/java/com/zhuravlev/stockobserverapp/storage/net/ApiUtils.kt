@@ -16,6 +16,7 @@ const val API_KEY_TWELVEDATA = "fc0526ea21df422884b38eb9e807d0b0"
 const val API_KEY_alphavantage = "ISYEPBVZD4WZRJ76"
 const val EXCHANGE_POSTFIX_FINNHUB = ".ME"
 const val EXCHANGE = "MOEX"
+val boardList = listOf("tqbr", "tqtd", "smal", "tqpi", "tqte", "tqtf")
 
 private val okHttpClient = OkHttpClient()
 private var retrofit: Retrofit? = null

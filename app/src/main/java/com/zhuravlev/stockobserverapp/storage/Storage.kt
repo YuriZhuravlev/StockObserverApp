@@ -5,7 +5,7 @@ import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbol
 import com.zhuravlev.stockobserverapp.model.ResponseSearchSymbolsFromExchange
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
-import com.zhuravlev.stockobserverapp.storage.net.EXCHANGE_POSTFIX_FINNHUB
+import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
 import com.zhuravlev.stockobserverapp.storage.net.TOKEN
 import com.zhuravlev.stockobserverapp.storage.net.getFinnhubApiService
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
@@ -46,34 +46,15 @@ class Storage {
         onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
         onError: (Throwable) -> Unit
     ) {
-        getMoexApiService().getPriceAllStocksLastDate(start = "0")
-            .request(
+        val api = getMoexApiService()
+        api.getPriceAllStocksLastDate(start = "0")
+            .requestIo(
                 { item1 ->
-                    getMoexApiService().getPriceAllStocksLastDate(start = "100")
-                        .request({ item2 ->
-                            getMoexApiService().getPriceAllStocksLastDate(start = "200")
+                    api.getPriceAllStocksLastDate(start = "100")
+                        .requestIo({ item2 ->
+                            api.getPriceAllStocksLastDate(start = "200")
                                 .request({ item3 ->
-                                    getMoexApiService().getPriceAllStocksLastDate(board = "tqtd")
-                                        .request({ item4 ->
-                                            getMoexApiService().getPriceAllStocksLastDate(board = "smal")
-                                                .request({ item5 ->
-                                                    getMoexApiService().getPriceAllStocksLastDate(
-                                                        board = "tqpi"
-                                                    )
-                                                        .request({ item6 ->
-                                                            getMoexApiService().getPriceAllStocksLastDate(
-                                                                board = "tqte"
-                                                            )
-                                                                .request({ item7 ->
-                                                                    getMoexApiService().getPriceAllStocksLastDate(
-                                                                        board = "tqtf"
-                                                                    ).request({ item8 ->
-                                                                        onSuccess(item1 + item2 + item3 + item4 + item5 + item6 + item7 + item8)
-                                                                    }, onError)
-                                                                }, onError)
-                                                        }, onError)
-                                                }, onError)
-                                        }, onError)
+                                    onSuccess(item1 + item2 + item3)
                                 }, onError)
                         }, onError)
                 }, onError
@@ -83,30 +64,49 @@ class Storage {
     fun getStocks(
         onSuccess: (List<Stock>) -> Unit,
         onError: (Throwable) -> Unit
-    ): MutableList<Stock> {
+    ) {
+        val api = getMoexApiService()
         val list = mutableListOf<Stock>()
-        getStocksFromExchange("ME", {
-            for (i in 0..it.lastIndex) {
-                list.add(
-                    Stock(
-                        it[i].symbol!!.removeSuffix(EXCHANGE_POSTFIX_FINNHUB),
-                        getLogo(it[i].symbol!!),
-                        it[i].description!!,
-                        false,
-                        "",
-                        ""
-                    )
-                )
+        api.getAllStocks().requestIo({ item1 ->
+            api.getAllStocks(start = "100").requestIo({ item2 ->
+                api.getAllStocks(start = "200").request({ item3 ->
+                    item3.forEach { e ->
+                        if (e.securities != null) {
+                            list.addAll(parseSecurities(e.securities))
+                        }
+                    }
+                    onSuccess(list)
+                }, onError)
+                item2.forEach { e ->
+                    if (e.securities != null) {
+                        list.addAll(parseSecurities(e.securities))
+                    }
+                }
+            }, onError)
+            item1.forEach { e ->
+                if (e.securities != null) {
+                    list.addAll(parseSecurities(e.securities))
+                }
             }
-            onSuccess(list)
-        }, onError = { onError(it) })
-        return list
+        }, onError)
     }
 }
 
 private fun <T> Single<T>.request(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
     this.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+            //TODO("Добавить обёртку для сохранения данных в db")
+            onSuccess(it)
+        }, {
+            //TODO("Добавить обёртку для данных из db")
+            onError(it)
+        })
+}
+
+private fun <T> Single<T>.requestIo(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit) {
+    this.subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
         .subscribe({
             //TODO("Добавить обёртку для сохранения данных в db")
             onSuccess(it)

@@ -32,9 +32,7 @@ class Storage(applicationContext: Context) {
 
     private fun updateStocks(list: List<Stock>) {
         mStockDao.getSingleStocks()
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe({
+            .requestIo({
                 var i: Int
                 list.forEach { stock ->
                     i = it.indexOf(stock)
@@ -58,40 +56,22 @@ class Storage(applicationContext: Context) {
 
     private fun getIoPriceAllStocksLastDate(
         start: String,
-        onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
-        onError: (Throwable) -> Unit
+        onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit
     ) {
-        getMoexApiService().getPriceAllStocksLastDate(start = start).requestIo(onSuccess, onError)
+        getMoexApiService().getPriceAllStocksLastDate(start = start).requestIo(onSuccess, {})
     }
 
-    /**
-     * Не кешируется, так как только цены
-     */
-    fun getCurrentPrices(
-        onSuccess: (Map<String, Pair<String, String>>) -> Unit,
-        onError: (Throwable) -> Unit
-    ) {
-        getIoPriceAllStocksLastDate(
-            "0", { item1 ->
-                getIoPriceAllStocksLastDate(
-                    "100", { item2 ->
-                        getIoPriceAllStocksLastDate(
-                            "200",
-                            { item3 ->
-                                parseResponsePriceAllStocksByDate(item1 + item2 + item3)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.io())
-                                    .subscribe({ map ->
-                                        synchronizePriceStocks(map).requestIo({}, {})
-                                        onSuccess(map)
-                                    }, onError)
-                            },
-                            onError
-                        )
-                    }, onError
-                )
-            }, onError
-        )
+    private fun updatePrices() {
+        getIoPriceAllStocksLastDate("0") { item1 ->
+            getIoPriceAllStocksLastDate("100") { item2 ->
+                getIoPriceAllStocksLastDate("200") { item3 ->
+                    parseResponsePriceAllStocksByDate(item1 + item2 + item3)
+                        .requestIo({ map ->
+                            synchronizePriceStocks(map).requestIo({}, {})
+                        }, {})
+                }
+            }
+        }
     }
 
 
@@ -100,9 +80,7 @@ class Storage(applicationContext: Context) {
         onSuccess: (List<ResponseAllStocks>) -> Unit
     ) {
         getMoexApiService().getAllStocks(start = start)
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe(onSuccess)
+            .requestIo(onSuccess, {})
     }
 
     /**
@@ -124,6 +102,7 @@ class Storage(applicationContext: Context) {
                         .observeOn(Schedulers.io())
                         .subscribe { parseList: MutableList<Stock> ->
                             updateStocks(parseList)
+                            updatePrices()
                         }
                 }
             }
@@ -133,15 +112,8 @@ class Storage(applicationContext: Context) {
     private fun saveStocks(stocks: List<Stock>) {
         mStockDao.insertStocks(stocks)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
             .subscribe { }
-    }
-
-    private fun loadStocks(onSuccess: (List<Stock>) -> Unit) {
-        mStockDao.getStocks()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess)
     }
 
     private fun synchronizePriceStocks(map: Map<String, Pair<String, String>>): Single<Unit> {

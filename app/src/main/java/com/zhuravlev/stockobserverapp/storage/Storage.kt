@@ -11,6 +11,7 @@ import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
 import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
+import com.zhuravlev.stockobserverapp.ui.Refreshable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -19,6 +20,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
     private val mStockDao: StockDAO
+    private var mRefreshable: Refreshable? = null
 
     init {
         instance = this
@@ -61,7 +63,8 @@ class Storage(applicationContext: Context) {
         getMoexApiService().getPriceAllStocksLastDate(start = start).requestIo(onSuccess, {})
     }
 
-    private fun updatePrices() {
+    fun updatePrices() {
+        toMainThread { mRefreshable?.startRefresh() }
         getIoPriceAllStocksLastDate("0") { item1 ->
             getIoPriceAllStocksLastDate("100") { item2 ->
                 getIoPriceAllStocksLastDate("200") { item3 ->
@@ -74,6 +77,12 @@ class Storage(applicationContext: Context) {
         }
     }
 
+    private fun toMainThread(action: () -> Unit) {
+        Single.fromCallable { }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe { s -> action() }
+    }
 
     private fun getAllStocks(
         start: String,
@@ -131,6 +140,11 @@ class Storage(applicationContext: Context) {
                         }
                     }
                     saveStocks(it)
+                    toMainThread { mRefreshable?.endRefresh() }
+                    Thread.sleep(20_000)
+                    toMainThread { mRefreshable?.hideRefresh() }
+                    Thread.sleep(1_200_000)
+                    toMainThread { mRefreshable?.showRefreshButton() }
                 }, {})
         }
     }
@@ -152,6 +166,10 @@ class Storage(applicationContext: Context) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { }
+    }
+
+    fun setRefreshable(refreshable: Refreshable) {
+        mRefreshable = refreshable
     }
 }
 

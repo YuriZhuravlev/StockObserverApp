@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.storage.Storage
+import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.FavouritesAdapter
 import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.StocksAdapter
 
 private const val STOCKS = 0
@@ -34,14 +35,18 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
+        holder.adapter = FavouritesAdapter()
+        holder.recyclerView.adapter = holder.adapter
         Storage.instance!!.getFavouritesStocks().subscribe {
-            holder.recyclerView.adapter = StocksAdapter(it, true)
+            holder.adapter.addList(it)
         }
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
+        holder.adapter = StocksAdapter()
+        holder.recyclerView.adapter = holder.adapter
         Storage.instance!!.getStocks().subscribe {
-            holder.recyclerView.adapter = StocksAdapter(it)
+            holder.adapter.addList(it)
         }
     }
 

@@ -118,10 +118,8 @@ class Storage(applicationContext: Context) {
 
     private fun synchronizePriceStocks(map: Map<String, Pair<String, String>>): Single<Unit> {
         return Single.fromCallable {
-            mStockDao.getStocks()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
+            mStockDao.getSingleStocks()
+                .requestIo({
                     it.forEach { stock ->
                         if (map.containsKey(stock.symbol)) {
                             val pair = map[stock.symbol]!!
@@ -133,7 +131,7 @@ class Storage(applicationContext: Context) {
                         }
                     }
                     saveStocks(it)
-                }
+                }, {})
         }
     }
 
@@ -150,7 +148,7 @@ class Storage(applicationContext: Context) {
     }
 
     fun changeStock(stock: Stock) {
-        mStockDao.insert(stock)
+        mStockDao.update(stock)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { }

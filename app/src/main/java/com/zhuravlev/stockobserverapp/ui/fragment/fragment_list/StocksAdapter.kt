@@ -10,9 +10,8 @@ import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
 
-class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
-    RecyclerView.Adapter<StockViewHolder>() {
-    private var mList = list
+open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
+    protected var mList = mutableListOf<Stock>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
@@ -67,6 +66,21 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
             R.color.yellow
         } else {
             R.color.grey
+        }
+    }
+
+    open fun addList(list: List<Stock>) {
+        list.forEach { stock ->
+            val index = mList.indexOf(stock)
+            if (index >= 0) {
+                if (!mList[index].identical(stock)) {
+                    mList[index] = stock
+                    notifyItemChanged(index)
+                }
+            } else {
+                mList.add(stock)
+                notifyItemInserted(mList.lastIndex)
+            }
         }
     }
 

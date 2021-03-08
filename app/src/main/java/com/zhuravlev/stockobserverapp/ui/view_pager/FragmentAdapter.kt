@@ -2,11 +2,9 @@ package com.zhuravlev.stockobserverapp.ui.view_pager
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.zhuravlev.stockobserverapp.R
-import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
 import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.StocksAdapter
 
@@ -36,23 +34,15 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
-        holder.recyclerView.adapter = StocksAdapter(Storage.instance!!.getFavouritesStocks(), true)
+        Storage.instance!!.getFavouritesStocks().subscribe {
+            holder.recyclerView.adapter = StocksAdapter(it, true)
+        }
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
-        Storage.instance?.getStocks({ it ->
-            holder.adapter = StocksAdapter(it as MutableList<Stock>)
-            holder.recyclerView.adapter = holder.adapter
-            Storage.instance?.getCurrentPrices({ map ->
-                holder.adapter.updatePrice(map)
-            }, {
-                Toast.makeText(item.context, it.message, Toast.LENGTH_SHORT).show()
-            })
-        }, { list: List<Stock>, throwable: Throwable ->
-            holder.adapter = StocksAdapter(list as MutableList<Stock>)
-            holder.recyclerView.adapter = holder.adapter
-            Toast.makeText(item.context, throwable.message, Toast.LENGTH_SHORT).show()
-        })
+        Storage.instance!!.getStocks().subscribe {
+            holder.recyclerView.adapter = StocksAdapter(it)
+        }
     }
 
     override fun getItemCount(): Int {

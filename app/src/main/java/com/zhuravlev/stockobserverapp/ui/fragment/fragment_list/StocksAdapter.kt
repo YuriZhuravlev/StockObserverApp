@@ -14,38 +14,6 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
     RecyclerView.Adapter<StockViewHolder>() {
     private var mList = list
 
-    init {
-        if (favourite) {
-            Storage.instance!!.getFav().subscribe {
-                mList = it
-                notifyDataSetChanged()
-            }
-//            mList = Storage.instance!!.getFavouritesStocks()
-//            Storage.instance!!.bus.toObservable().subscribe {
-//                if (it.star) {
-//                    // add
-//                    if (!mList.contains(it)) {
-//                        mList.add(it)
-//                        notifyItemInserted(mList.size-1)
-//                    }
-//                } else {
-//                    //remove
-//                    val index = mList.indexOf(it)
-//                    mList.remove(it)
-//                    notifyItemRemoved(index)
-//                }
-//            }
-//            notifyDataSetChanged()
-//        } else {
-//            Storage.instance!!.bus.toObservable().subscribe {
-//                val index = mList.indexOf(it)
-//                if (mList[index].star != it.star) {
-//                    mList[index].star = it.star
-//                    notifyItemChanged(index+1)
-//                }
-//            }
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         return StockViewHolder(
@@ -88,7 +56,7 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
             holder.star.setOnClickListener {
                 this.star = !this.star
                 holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
-                Storage.instance!!.changeFavourite(this)
+                Storage.instance!!.changeStock(this)
             }
             holder.view.setOnClickListener { }
         }

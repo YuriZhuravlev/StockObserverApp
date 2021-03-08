@@ -17,6 +17,9 @@ interface StockDAO {
     @Update
     fun update(stock: Stock): Completable
 
+    @Update
+    fun updateStocks(list: List<Stock>): Completable
+
     @Delete
     fun delete(stock: Stock): Completable
 
@@ -24,8 +27,11 @@ interface StockDAO {
     fun getStockBySymbol(symbol: String): Single<Stock>
 
     @Query("SELECT * FROM stock ORDER BY stock.symbol")
-    fun getStocks(): Flowable<List<Stock>>
+    fun getStocks(): Flowable<MutableList<Stock>>
 
-    @Query("SELECT * FROM stock WHERE stock.star == :star")
-    fun getFavouritesStocks(star: Boolean = true): Flowable<MutableList<Stock>>
+    @Query("SELECT * FROM stock ORDER BY stock.symbol")
+    fun getSingleStocks(): Single<MutableList<Stock>>
+
+    @Query("SELECT * FROM stock WHERE stock.star == 1")
+    fun getFavouritesStocks(): Flowable<MutableList<Stock>>
 }

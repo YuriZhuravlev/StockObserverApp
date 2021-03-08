@@ -24,17 +24,6 @@
             android:layout_height="wrap_content"
             app:tabIndicatorHeight="0dp"
             app:tabMode="fixed" />
-        <!--        <com.google.android.material.tabs.TabLayout-->
-        <!--            android:id="@+id/main_tab"-->
-        <!--            app:tabGravity="start"-->
-        <!--            android:layout_gravity="start"-->
-        <!--            app:tabSelectedTextColor="@color/black"-->
-        <!--            app:tabTextColor="@color/grey"-->
-        <!--            app:tabTextAppearance="@style/MyCustomTextAppearance"-->
-        <!--            app:tabIndicatorHeight="0dp"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            app:tabMode="fixed" />-->
 
         <TextView
             android:id="@+id/main_text_info"

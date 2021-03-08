@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -21,6 +22,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), Refreshable {
     private lateinit var mToolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var mSearchView: SearchView
     private lateinit var mViewPager: ViewPager2
     private lateinit var mTab: TabLayout
     private lateinit var mTextInfo: TextView
@@ -30,6 +32,15 @@ class MainActivity : AppCompatActivity(), Refreshable {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mToolbar = findViewById(R.id.main_toolbar)
+        mSearchView = findViewById(R.id.toolbar_search_view)
+        mSearchView.setOnQueryTextFocusChangeListener { view: View, bool: Boolean ->
+            // TODO("Можно создать отдельный класс на уровне storage который будет отдавать
+            //  переменную типа Boolean и Single запрос потом выполняется в БД (через Storage -
+            //  помним про разделение ответственности) в итоге пока переменная true мы не обрабатываем
+            //  сообщения из Flowable и при смене списка (Favourite <-> Stocks) мы сбрасываем эту
+            //  переменную, но если пользователь решит продолжить поиск, то он может активировать поиск
+            //  и оставшийся запрос активируется")
+        }
         mViewPager = findViewById(R.id.main_view_pager)
         mTab = findViewById(R.id.main_tab)
         mTextInfo = findViewById(R.id.main_text_info)

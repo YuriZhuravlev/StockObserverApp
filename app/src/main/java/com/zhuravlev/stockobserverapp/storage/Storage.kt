@@ -3,21 +3,22 @@ package com.zhuravlev.stockobserverapp.storage
 import android.content.Context
 import androidx.room.Room
 import com.zhuravlev.stockobserverapp.model.Stock
-import com.zhuravlev.stockobserverapp.model.finnhub.Profile
-import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbol
-import com.zhuravlev.stockobserverapp.model.finnhub.ResponseSearchSymbolsFromExchange
+import com.zhuravlev.stockobserverapp.model.moex.ResponseAllStocks
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
+import com.zhuravlev.stockobserverapp.model.moex.SecuritiesItem
+import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponsePriceAllStocksByDate
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurities
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
-import com.zhuravlev.stockobserverapp.storage.net.TOKEN
-import com.zhuravlev.stockobserverapp.storage.net.getFinnhubApiService
+import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
+    private val mStockDao: StockDAO
 
     init {
         instance = this
@@ -25,134 +26,141 @@ class Storage(applicationContext: Context) {
             applicationContext,
             AppDatabase::class.java, "database-stock-observer"
         ).build()
+        mStockDao = mDatabase.stockDao()
+        downloadStocks()
+    }
+
+    private fun updateStocks(list: List<Stock>) {
+        mStockDao.getSingleStocks()
+            .requestIo({
+                var i: Int
+                list.forEach { stock ->
+                    i = it.indexOf(stock)
+                    if (i >= 0) {
+                        it[i].price = stock.price
+                        it[i].changePrice = stock.changePrice
+                    } else {
+                        it.add(stock)
+                    }
+                }
+                mStockDao.updateStocks(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { }
+            }, {})
     }
 
     companion object {
         var instance: Storage? = null
     }
 
-    fun searchSymbol(
-        symbol: String,
-        onSuccess: (ResponseSearchSymbol) -> Unit,
-        onError: (List<Stock>, Throwable) -> Unit
+    private fun getIoPriceAllStocksLastDate(
+        start: String,
+        onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit
     ) {
-        getFinnhubApiService().getSymbolLookup(symbol, TOKEN).request(onSuccess, onError)
+        getMoexApiService().getPriceAllStocksLastDate(start = start).requestIo(onSuccess, {})
     }
 
-    fun getStocksFromExchange(
-        exchange: String,
-        onSuccess: (List<ResponseSearchSymbolsFromExchange>) -> Unit,
-        onError: (List<Stock>, Throwable) -> Unit
-    ) {
-        getFinnhubApiService().getStockSymbolFromExchange(exchange, TOKEN)
-            .request(onSuccess, onError)
-    }
-
-    fun getProfile(
-        symbol: String, onSuccess: (Profile) -> Unit,
-        onError: (List<Stock>, Throwable) -> Unit
-    ) {
-        getFinnhubApiService().getCompany(symbol, TOKEN).request(onSuccess, onError)
-    }
-
-    fun getLogo(symbol: String): String {
-        return "https://finnhub.io/api/logo?symbol=$symbol"
-    }
-
-    fun getCurrentPrices(
-        onSuccess: (List<ResponsePriceAllStocksByDate>) -> Unit,
-        onError: (List<Stock>, Throwable) -> Unit
-    ) {
-        val api = getMoexApiService()
-        api.getPriceAllStocksLastDate(start = "0")
-            .requestIo(
-                { item1 ->
-                    api.getPriceAllStocksLastDate(start = "100")
-                        .requestIo({ item2 ->
-                            api.getPriceAllStocksLastDate(start = "200")
-                                .request({ item3 ->
-                                    onSuccess(item1 + item2 + item3)
-                                }, onError)
-                        }, onError)
-                }, onError
-            )
-    }
-
-    fun getStocks(
-        onSuccess: (List<Stock>) -> Unit,
-        onError: (List<Stock>, Throwable) -> Unit
-    ) {
-        val api = getMoexApiService()
-        val list = mutableListOf<Stock>()
-        api.getAllStocks().requestIo({ item1 ->
-            api.getAllStocks(start = "100").requestIo({ item2 ->
-                api.getAllStocks(start = "200").request({ item3 ->
-                    item3.forEach { e ->
-                        if (e.securities != null) {
-                            list.addAll(parseSecurities(e.securities))
-                        }
-                    }
-                    onSuccess(list)
-                }, onError)
-                item2.forEach { e ->
-                    if (e.securities != null) {
-                        list.addAll(parseSecurities(e.securities))
-                    }
-                }
-            }, onError)
-            item1.forEach { e ->
-                if (e.securities != null) {
-                    list.addAll(parseSecurities(e.securities))
+    private fun updatePrices() {
+        getIoPriceAllStocksLastDate("0") { item1 ->
+            getIoPriceAllStocksLastDate("100") { item2 ->
+                getIoPriceAllStocksLastDate("200") { item3 ->
+                    parseResponsePriceAllStocksByDate(item1 + item2 + item3)
+                        .requestIo({ map ->
+                            synchronizePriceStocks(map).requestIo({}, {})
+                        }, {})
                 }
             }
-        }, onError)
+        }
     }
 
-    fun saveStocks(stocks: List<Stock>) {
-        mDatabase.stockDao().insertStocks(stocks)
+
+    private fun getAllStocks(
+        start: String,
+        onSuccess: (List<ResponseAllStocks>) -> Unit
+    ) {
+        getMoexApiService().getAllStocks(start = start)
+            .requestIo(onSuccess, {})
+    }
+
+    /**
+     * Есть загрузка данных из бд, но нет записи в бд, так как данные пока без цен
+     */
+    private fun downloadStocks() {
+        getAllStocks("0") { item1 ->
+            getAllStocks("100") { item2 ->
+                getAllStocks("200") { item3 ->
+                    val items = item1 + item2 + item3
+                    val list = mutableListOf<SecuritiesItem?>()
+                    items.forEach { responseItem ->
+                        if (responseItem.securities != null) {
+                            list.addAll(responseItem.securities)
+                        }
+                    }
+                    parseSecurities(list)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribe { parseList: MutableList<Stock> ->
+                            updateStocks(parseList)
+                            updatePrices()
+                        }
+                }
+            }
+        }
+    }
+
+    private fun saveStocks(stocks: List<Stock>) {
+        mStockDao.insertStocks(stocks)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe { }
+    }
+
+    private fun synchronizePriceStocks(map: Map<String, Pair<String, String>>): Single<Unit> {
+        return Single.fromCallable {
+            mStockDao.getSingleStocks()
+                .requestIo({
+                    it.forEach { stock ->
+                        if (map.containsKey(stock.symbol)) {
+                            val pair = map[stock.symbol]!!
+                            stock.price = pair.first
+                            stock.changePrice = String.format(
+                                "%.2f",
+                                (pair.first.toDouble() - pair.second.toDouble())
+                            )
+                        }
+                    }
+                    saveStocks(it)
+                }, {})
+        }
+    }
+
+    fun getFavouritesStocks(): Flowable<MutableList<Stock>> {
+        return mStockDao.getFavouritesStocks()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun getStocks(): Flowable<MutableList<Stock>> {
+        return mStockDao.getStocks()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun changeStock(stock: Stock) {
+        mStockDao.update(stock)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { }
     }
-
-    fun loadStocks(onSuccess: (List<Stock>) -> Unit) {
-        mDatabase.stockDao().getStocks()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess)
-    }
 }
 
-private fun <T> Single<T>.request(
-    onSuccess: (T) -> Unit,
-    onError: (List<Stock>, Throwable) -> Unit
-) {
-    this.subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-            onSuccess(it)
-        }, {
-            Storage.instance?.getStocks({ list ->
-                onError(list, it)
-            }, { list: List<Stock>, throwable: Throwable ->
-                onError(listOf(), it)
-            })
-        })
-}
 
 private fun <T> Single<T>.requestIo(
     onSuccess: (T) -> Unit,
-    onError: (List<Stock>, Throwable) -> Unit
+    onError: (Throwable) -> Unit
 ) {
     this.subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
-        .subscribe({
-            onSuccess(it)
-        }, {
-            Storage.instance?.getStocks({ list ->
-                onError(list, it)
-            }, { list: List<Stock>, throwable: Throwable ->
-                onError(listOf(), it)
-            })
-        })
+        .subscribe(onSuccess, onError)
 }

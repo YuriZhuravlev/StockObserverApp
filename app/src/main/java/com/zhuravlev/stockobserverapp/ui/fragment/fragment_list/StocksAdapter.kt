@@ -10,8 +10,9 @@ import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
 
-class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>() {
-    private val mList = list
+open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
+    protected var mList = mutableListOf<Stock>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
         return StockViewHolder(
@@ -42,7 +43,8 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
                 e.printStackTrace()
             }
             holder.changePrice.text = this.changePrice
-
+            holder.star.drawable.setTint(Color.WHITE)
+            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             if (this.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(this.imageUrl)
@@ -50,14 +52,13 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
                     .error(R.drawable.ic_factory)
                     .into(holder.image)
             }
-            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             holder.star.setOnClickListener {
                 this.star = !this.star
                 holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
+                Storage.instance!!.changeStock(this)
             }
             holder.view.setOnClickListener { }
         }
-
     }
 
     private fun getColorId(star: Boolean): Int {
@@ -68,22 +69,22 @@ class StocksAdapter(list: List<Stock>) : RecyclerView.Adapter<StockViewHolder>()
         }
     }
 
-    override fun getItemCount(): Int {
-        return mList.size
-    }
-
-    fun updatePrice(map: Map<String, Pair<String, String>>) {
-        for (i in 0..mList.lastIndex) {
-            if (map.containsKey(mList[i].symbol)) {
-                val pair = map[mList[i].symbol]!!
-                mList[i].price = pair.first
-                mList[i].changePrice = String.format(
-                    "%.2f",
-                    (pair.first.toDouble() - pair.second.toDouble())
-                )
-                notifyItemChanged(i)
+    open fun addList(list: List<Stock>) {
+        list.forEach { stock ->
+            val index = mList.indexOf(stock)
+            if (index >= 0) {
+                if (!mList[index].identical(stock)) {
+                    mList[index] = stock
+                    notifyItemChanged(index)
+                }
+            } else {
+                mList.add(stock)
+                notifyItemInserted(mList.lastIndex)
             }
         }
-        Storage.instance?.saveStocks(mList)
+    }
+
+    override fun getItemCount(): Int {
+        return mList.size
     }
 }

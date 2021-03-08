@@ -44,22 +44,25 @@ fun parseResponsePriceAllStocksByDate(response: List<ResponsePriceAllStocksByDat
 }
 
 
-fun parseSecurities(response: List<SecuritiesItem?>): MutableList<Stock> {
-    val list = mutableListOf<Stock>()
-    response.forEach {
-        if (it != null && it.secId != null && it.boardId != null) {
-            list.add(
-                Stock(
-                    it.secId,
-                    "https://finnhub.io/api/logo?symbol=${it.secId}.ME",
-                    it.name ?: it.shortName ?: "",
-                    false,
-                    "",
-                    "",
-                    it.boardId
+fun parseSecurities(response: List<SecuritiesItem?>): Single<MutableList<Stock>> {
+    return Single.fromCallable {
+        val list = mutableListOf<Stock>()
+        response.forEach {
+            if (it != null && it.secId != null && it.boardId != null) {
+                list.add(
+                    Stock(
+                        it.secId,
+                        "https://finnhub.io/api/logo?symbol=${it.secId}.ME",
+                        it.name ?: it.shortName ?: "",
+                        false,
+                        "",
+                        "",
+                        it.boardId
+                    )
                 )
-            )
+            }
         }
-    }
-    return list
+        return@fromCallable list
+    }.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

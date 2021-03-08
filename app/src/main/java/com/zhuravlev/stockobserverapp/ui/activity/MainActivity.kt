@@ -1,15 +1,15 @@
 package com.zhuravlev.stockobserverapp.ui.activity
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.ui.view_pager.FragmentAdapter
-import moxy.MvpAppCompatActivity
 
-class MainActivity : MvpAppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var mToolbar: androidx.appcompat.widget.Toolbar
     private lateinit var mViewPager: ViewPager2
     private lateinit var mTab: TabLayout

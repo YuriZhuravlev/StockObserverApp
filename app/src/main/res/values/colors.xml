@@ -13,5 +13,6 @@
     <color name="grey">#BABABA</color>
     <color name="yellow">#FFCA1C</color>
     <color name="green">#24B25D</color>
+    <color name="dark_green">#326837</color>
     <color name="red">#B22424</color>
 </resources>

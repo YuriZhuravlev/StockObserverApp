@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <objectAnimator>
+            <propertyValuesHolder
+                android:duration="400"
+                android:propertyName="textSize"
+                android:valueTo="10sp"
+                android:valueType="floatType" />
+            <propertyValuesHolder
+                android:duration="400"
+                android:propertyName="textColor"
+                android:valueTo="@color/black"
+                android:valueType="colorType" />
+        </objectAnimator>
+    </item>
+
+    <item>
+        <objectAnimator>
+            <propertyValuesHolder
+                android:duration="400"
+                android:propertyName="textSize"
+                android:valueTo="8sp"
+                android:valueType="floatType" />
+            <propertyValuesHolder
+                android:duration="400"
+                android:propertyName="textColor"
+                android:valueTo="@color/grey"
+                android:valueType="colorType" />
+        </objectAnimator>
+    </item>
+</selector>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -43,9 +44,11 @@ class MainActivity : AppCompatActivity(), Refreshable {
         mViewPager.adapter = FragmentAdapter(listOf(Fragment(), Fragment()))
         TabLayoutMediator(mTab, mViewPager) { tab, position ->
             if (position == 0) {
-                tab.text = "Stocks"
+                tab.setCustomView(R.layout.tab_title)
+                tab.text = getString(R.string.stocks)
             } else {
-                tab.text = "Favourites"
+                tab.setCustomView(R.layout.tab_title)
+                tab.text = getString(R.string.favourites)
             }
         }.attach()
     }
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity(), Refreshable {
         mRefreshButton.visibility = View.GONE
         mTextInfo.visibility = View.VISIBLE
         mTextInfo.background.setTint(Color.WHITE)
-        mTextInfo.text = "обновление"
+        mTextInfo.text = getString(R.string.refreshing)
     }
 
     override fun showRefreshButton() {
@@ -67,8 +70,8 @@ class MainActivity : AppCompatActivity(), Refreshable {
 
     override fun endRefresh() {
         val timeFormat: DateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val text: String = getString(R.string.update_time) + timeFormat.format(Date())
-        mTextInfo.background.setTint(Color.GREEN)
+        val text: String = getString(R.string.update_time) + " " + timeFormat.format(Date())
+        mTextInfo.background.setTint(ContextCompat.getColor(this, R.color.dark_green))
         mTextInfo.text = text
     }
 

@@ -12,11 +12,12 @@ class FavouritesAdapter : StocksAdapter() {
                     first = i
                 }
                 mList.removeAt(i)
+                notifyItemRemoved(i)
             } else {
                 i++
             }
         }
-        notifyItemRangeChanged(first, mList.size)
+        notifyItemRangeChanged(first, mList.lastIndex)
         super.addList(list)
     }
 }

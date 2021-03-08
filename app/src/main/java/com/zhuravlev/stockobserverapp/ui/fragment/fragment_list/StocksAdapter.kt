@@ -44,7 +44,8 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
                 e.printStackTrace()
             }
             holder.changePrice.text = this.changePrice
-
+            holder.star.drawable.setTint(Color.WHITE)
+            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             if (this.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(this.imageUrl)
@@ -52,7 +53,6 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
                     .error(R.drawable.ic_factory)
                     .into(holder.image)
             }
-            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
             holder.star.setOnClickListener {
                 this.star = !this.star
                 holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
@@ -60,7 +60,6 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
             }
             holder.view.setOnClickListener { }
         }
-
     }
 
     private fun getColorId(star: Boolean): Int {
@@ -73,19 +72,5 @@ class StocksAdapter(list: MutableList<Stock>, favourite: Boolean = false) :
 
     override fun getItemCount(): Int {
         return mList.size
-    }
-
-    fun updatePrice(map: Map<String, Pair<String, String>>) {
-        for (i in 0..mList.lastIndex) {
-            if (map.containsKey(mList[i].symbol)) {
-                val pair = map[mList[i].symbol]!!
-                mList[i].price = pair.first
-                mList[i].changePrice = String.format(
-                    "%.2f",
-                    (pair.first.toDouble() - pair.second.toDouble())
-                )
-                notifyItemChanged(i)
-            }
-        }
     }
 }

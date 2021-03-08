@@ -32,6 +32,6 @@ interface StockDAO {
     @Query("SELECT * FROM stock ORDER BY stock.symbol")
     fun getSingleStocks(): Single<MutableList<Stock>>
 
-    @Query("SELECT * FROM stock WHERE stock.star == 1")
+    @Query("SELECT * FROM stock WHERE stock.star == 1 ORDER BY stock.symbol")
     fun getFavouritesStocks(): Flowable<MutableList<Stock>>
 }

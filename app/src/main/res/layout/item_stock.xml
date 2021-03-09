@@ -39,7 +39,7 @@
         android:id="@+id/item_stock_star"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:src="@drawable/ic_star"
+        android:src="@drawable/ic_favourite"
         android:layout_marginStart="@dimen/app_margin"
         app:layout_constraintTop_toTopOf="@id/item_stock_title"
         app:layout_constraintBottom_toBottomOf="@id/item_stock_title"

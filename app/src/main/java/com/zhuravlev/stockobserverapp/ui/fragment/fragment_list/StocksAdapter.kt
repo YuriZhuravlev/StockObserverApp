@@ -43,8 +43,7 @@ open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
                 e.printStackTrace()
             }
             holder.changePrice.text = this.changePrice
-            holder.star.drawable.setTint(Color.WHITE)
-            holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
+            holder.star.isSelected = this.star
             if (this.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(this.imageUrl)
@@ -54,7 +53,7 @@ open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
             }
             holder.star.setOnClickListener {
                 this.star = !this.star
-                holder.star.drawable.setTint(ContextCompat.getColor(context, getColorId(this.star)))
+                holder.star.isSelected = this.star
                 Storage.instance!!.changeStock(this)
             }
             holder.view.setOnClickListener { }

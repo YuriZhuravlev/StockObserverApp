@@ -9,5 +9,10 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/toolbar_search_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="@dimen/app_margin"
+        android:background="@drawable/background_search"
+        android:imeOptions="actionNone"
+        app:iconifiedByDefault="false"
+        app:queryHint="@string/search_hint" />
 </androidx.appcompat.widget.Toolbar>

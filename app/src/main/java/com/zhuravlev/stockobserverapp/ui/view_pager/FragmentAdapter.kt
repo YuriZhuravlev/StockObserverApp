@@ -49,6 +49,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
                 holder.adapter.addList(it)
             }
         }
+        Search.instance.getQuery()
     }
 
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
@@ -61,6 +62,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
                 holder.adapter.addList(it)
             }
         }
+        Search.instance.getQuery()
     }
 
     override fun getItemCount(): Int {

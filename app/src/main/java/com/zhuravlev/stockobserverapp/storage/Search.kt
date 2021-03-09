@@ -25,6 +25,10 @@ class Search private constructor() {
         return mQueryObservable
     }
 
+    fun getQuery() {
+        mQueryObservable.onNext(mQuery)
+    }
+
     companion object {
         var instance: Search = Search()
     }

@@ -42,7 +42,7 @@ class Storage(applicationContext: Context) {
                         it[i].price = stock.price
                         it[i].changePrice = stock.changePrice
                     } else {
-                        it.add(stock)
+                        mStockDao.insert(stock)
                     }
                 }
                 mStockDao.updateStocks(it)

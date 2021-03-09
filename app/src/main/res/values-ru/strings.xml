@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="refresh">Обновить</string>
+    <string name="update_time">Обновлено в</string>
+    <string name="stocks">Акции</string>
+    <string name="favourites">Избранное</string>
+    <string name="refreshing">Обновление</string>
+    <string name="search_hint">Найти компанию или тикер</string>
+</resources>

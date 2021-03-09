@@ -149,14 +149,26 @@ class Storage(applicationContext: Context) {
         }
     }
 
-    fun getFavouritesStocks(): Flowable<MutableList<Stock>> {
-        return mStockDao.getFavouritesStocks()
+    fun getFavouritesStocks(query: String = ""): Flowable<MutableList<Stock>> {
+        if (query.isEmpty()) {
+            return mStockDao.getFavouritesStocks()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        }
+        val que = "%$query%"
+        return mStockDao.getFavouritesStocksByQuery(que)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getStocks(): Flowable<MutableList<Stock>> {
-        return mStockDao.getStocks()
+    fun getStocks(query: String = ""): Flowable<MutableList<Stock>> {
+        if (query.isEmpty()) {
+            return mStockDao.getStocks()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+        }
+        val que = "%$query%"
+        return mStockDao.getStocksByQuery(que)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

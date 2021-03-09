@@ -84,6 +84,11 @@ open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
         }
     }
 
+    fun clearList() {
+        mList.clear()
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return mList.size
     }

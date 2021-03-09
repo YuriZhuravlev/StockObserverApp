@@ -80,7 +80,7 @@ data class MarketDataItem(
     val last: Int? = null,
 
     @field:SerializedName("LCURRENTPRICE")
-    val lCurrentPrice: Int? = null,
+    val lCurrentPrice: String? = null,
 
     @field:SerializedName("SECID")
     val secId: String? = null,
@@ -143,7 +143,7 @@ data class MarketDataItem(
     val tradingStatus: String? = null,
 
     @field:SerializedName("LASTCHANGE")
-    val lastChange: Double? = null,
+    val lastChange: String? = null,
 
     @field:SerializedName("VOLTODAY")
     val volToday: Int? = null,

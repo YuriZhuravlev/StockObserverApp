@@ -5,4 +5,5 @@ interface Refreshable {
     fun endRefresh()
     fun hideRefresh()
     fun showRefreshButton()
+    fun showError(message: String)
 }

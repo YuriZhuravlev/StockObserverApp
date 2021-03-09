@@ -11,43 +11,43 @@ data class ResponseMarketData(
 data class MarketDataItem(
 
     @field:SerializedName("OPENPERIODPRICE")
-    val openPeriodPrice: Int? = null,
+    val openPeriodPrice: String? = null,
 
     @field:SerializedName("HIGH")
-    val high: Double? = null,
+    val high: String? = null,
 
     @field:SerializedName("BOARDID")
     val boardId: String? = null,
 
     @field:SerializedName("OFFERDEPTHT")
-    val offerDepthT: Int? = null,
+    val offerDepthT: String? = null,
 
     @field:SerializedName("VALUE")
-    val value: Double? = null,
+    val value: String? = null,
 
     @field:SerializedName("LASTOFFER")
     val lASTOFFER: Any? = null,
 
     @field:SerializedName("QTY")
-    val qty: Int? = null,
+    val qty: String? = null,
 
     @field:SerializedName("WAPTOPREVWAPRICE")
-    val wapToPrevWaPrice: Int? = null,
+    val wapToPrevWaPrice: String? = null,
 
     @field:SerializedName("MARKETPRICETODAY")
-    val marketPriceToday: Int? = null,
+    val marketPriceToday: String? = null,
 
     @field:SerializedName("MARKETPRICE2")
-    val marketPrice2: Int? = null,
+    val marketPrice2: String? = null,
 
     @field:SerializedName("CLOSINGAUCTIONVOLUME")
-    val closingAuctionVolume: Int? = null,
+    val closingAuctionVolume: String? = null,
 
     @field:SerializedName("ETFSETTLEPRICE")
     val etfSetTlePrice: Any? = null,
 
     @field:SerializedName("NUMTRADES")
-    val numTrades: Int? = null,
+    val numTrades: String? = null,
 
     @field:SerializedName("CLOSEPRICE")
     val closePrice: Any? = null,
@@ -59,25 +59,25 @@ data class MarketDataItem(
     val highBid: Any? = null,
 
     @field:SerializedName("MARKETPRICE")
-    val marketPrice: Int? = null,
+    val marketPrice: String? = null,
 
     @field:SerializedName("LASTTOPREVPRICE")
-    val lastToPrevPrice: Double? = null,
+    val lastToPrevPrice: String? = null,
 
     @field:SerializedName("WAPRICE")
-    val waPrice: Int? = null,
+    val waPrice: String? = null,
 
     @field:SerializedName("OFFERDEPTH")
     val offerDepth: Any? = null,
 
     @field:SerializedName("ISSUECAPITALIZATION")
-    val issueCapitalization: Long? = null,
+    val issueCapitalization: String? = null,
 
     @field:SerializedName("LOW")
-    val low: Double? = null,
+    val low: String? = null,
 
     @field:SerializedName("LAST")
-    val last: Int? = null,
+    val last: String? = null,
 
     @field:SerializedName("LCURRENTPRICE")
     val lCurrentPrice: String? = null,
@@ -86,19 +86,19 @@ data class MarketDataItem(
     val secId: String? = null,
 
     @field:SerializedName("LCLOSEPRICE")
-    val lClosePrice: Int? = null,
+    val lClosePrice: String? = null,
 
     @field:SerializedName("UPDATETIME")
     val updateTime: String? = null,
 
     @field:SerializedName("CLOSINGAUCTIONPRICE")
-    val closingAuctionPrice: Int? = null,
+    val closingAuctionPrice: String? = null,
 
     @field:SerializedName("VALTODAY_USD")
-    val valTodayUsd: Int? = null,
+    val valTodayUsd: String? = null,
 
     @field:SerializedName("ADMITTEDQUOTE")
-    val admitTedQuote: Int? = null,
+    val admitTedQuote: String? = null,
 
     @field:SerializedName("OFFER")
     val offer: Any? = null,
@@ -107,37 +107,37 @@ data class MarketDataItem(
     val sysTime: String? = null,
 
     @field:SerializedName("LASTCNGTOLASTWAPRICE")
-    val lastCngToLastWapPrice: Int? = null,
+    val lastCngToLastWapPrice: String? = null,
 
     @field:SerializedName("VALTODAY")
-    val valToday: Int? = null,
+    val valToday: String? = null,
 
     @field:SerializedName("BIDDEPTHT")
-    val bidDepthT: Int? = null,
+    val bidDepthT: String? = null,
 
     @field:SerializedName("SEQNUM")
-    val seqNum: Int? = null,
+    val seqNum: String? = null,
 
     @field:SerializedName("VALTODAY_RUR")
-    val valTodayRur: Int? = null,
+    val valTodayRur: String? = null,
 
     @field:SerializedName("NUMOFFERS")
     val numOffers: Any? = null,
 
     @field:SerializedName("CHANGE")
-    val change: Int? = null,
+    val change: String? = null,
 
     @field:SerializedName("BID")
     val bId: Any? = null,
 
     @field:SerializedName("SPREAD")
-    val spread: Int? = null,
+    val spread: String? = null,
 
     @field:SerializedName("LOWOFFER")
     val lowOffer: Any? = null,
 
     @field:SerializedName("LASTCHANGEPRCNT")
-    val lastChangePrcnt: Double? = null,
+    val lastChangePrcnt: String? = null,
 
     @field:SerializedName("TRADINGSTATUS")
     val tradingStatus: String? = null,
@@ -146,10 +146,10 @@ data class MarketDataItem(
     val lastChange: String? = null,
 
     @field:SerializedName("VOLTODAY")
-    val volToday: Int? = null,
+    val volToday: String? = null,
 
     @field:SerializedName("WAPTOPREVWAPRICEPRCNT")
-    val wapToPrevWaPricePrcnt: Double? = null,
+    val wapToPrevWaPricePrcnt: String? = null,
 
     @field:SerializedName("TIME")
     val time: String? = null,
@@ -158,10 +158,10 @@ data class MarketDataItem(
     val issueCapitalizationUpdateTime: String? = null,
 
     @field:SerializedName("OPEN")
-    val open: Int? = null,
+    val open: String? = null,
 
     @field:SerializedName("VALUE_USD")
-    val valueUsd: Double? = null,
+    val valueUsd: String? = null,
 
     @field:SerializedName("NUMBIDS")
     val numBIds: Any? = null,
@@ -176,5 +176,5 @@ data class MarketDataItem(
     val lastBId: Any? = null,
 
     @field:SerializedName("PRICEMINUSPREVWAPRICE")
-    val priceMinusPrevWaPrice: Int? = null
+    val priceMinusPrevWaPrice: String? = null
 )

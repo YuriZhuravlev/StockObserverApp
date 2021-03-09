@@ -98,6 +98,12 @@ class MainActivity : AppCompatActivity(), Refreshable {
         mTextInfo.text = getString(R.string.refreshing)
     }
 
+    override fun showError(message: String) {
+        mTextInfo.visibility = View.VISIBLE
+        mTextInfo.background.setTint(Color.RED)
+        mTextInfo.text = message
+    }
+
     override fun showRefreshButton() {
         mRefreshButton.visibility = View.VISIBLE
     }

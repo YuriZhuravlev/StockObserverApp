@@ -17,16 +17,16 @@ data class Security(
 	val secName: String? = null,
 
 	@field:SerializedName("PREVADMITTEDQUOTE")
-	val prevAdmitTedQuote: Int? = null,
+	val prevAdmitTedQuote: String? = null,
 
 	@field:SerializedName("BOARDID")
 	val boardId: String? = null,
 
 	@field:SerializedName("PREVWAPRICE")
-	val prevWaPrice: Int? = null,
+	val prevWaPrice: String? = null,
 
 	@field:SerializedName("PREVPRICE")
-	val prevPrice: Int? = null,
+	val prevPrice: String? = null,
 
 	@field:SerializedName("REMARKS")
 	val remarks: Any? = null,
@@ -38,10 +38,10 @@ data class Security(
 	val status: String? = null,
 
 	@field:SerializedName("ISSUESIZE")
-	val issueSize: Int? = null,
+	val issueSize: String? = null,
 
 	@field:SerializedName("LISTLEVEL")
-	val listLevel: Int? = null,
+	val listLevel: String? = null,
 
 	@field:SerializedName("PREVDATE")
 	val prevDate: String? = null,
@@ -50,10 +50,10 @@ data class Security(
 	val currencyId: String? = null,
 
 	@field:SerializedName("DECIMALS")
-	val decimals: Int? = null,
+	val decimals: String? = null,
 
 	@field:SerializedName("LOTSIZE")
-	val lotSize: Int? = null,
+	val lotSize: String? = null,
 
 	@field:SerializedName("INSTRID")
 	val inStrId: String? = null,
@@ -71,10 +71,10 @@ data class Security(
 	val sectorId: Any? = null,
 
 	@field:SerializedName("FACEVALUE")
-	val faceValue: Int? = null,
+	val faceValue: String? = null,
 
 	@field:SerializedName("PREVLEGALCLOSEPRICE")
-	val prevLegalClosePrice: Int? = null,
+	val prevLegalClosePrice: String? = null,
 
 	@field:SerializedName("ISIN")
 	val isin: String? = null,
@@ -89,7 +89,7 @@ data class Security(
 	val boardName: String? = null,
 
 	@field:SerializedName("MINSTEP")
-	val minStep: Double? = null,
+	val minStep: String? = null,
 
 	@field:SerializedName("SECID")
 	val secId: String? = null

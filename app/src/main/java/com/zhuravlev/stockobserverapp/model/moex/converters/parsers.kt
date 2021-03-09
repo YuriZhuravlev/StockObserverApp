@@ -105,8 +105,8 @@ fun parseResponseMarketData(response: List<ResponseMarketData>): Single<Map<Stri
         response.forEach {
             if (it.marketdata != null) {
                 it.marketdata.forEach { item ->
-                    if (item?.secId != null && item.lastChange != null && item.lCurrentPrice != null) {
-                        map[item.secId] = Pair(item.lCurrentPrice, item.lastChange)
+                    if (item?.secId != null && item.change != null && item.lCurrentPrice != null) {
+                        map[item.secId] = Pair(item.lCurrentPrice, item.change)
                     }
                 }
             }

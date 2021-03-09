@@ -32,26 +32,6 @@ class Storage(applicationContext: Context) {
         downloadStocks()
     }
 
-    private fun updateStocks(list: List<Stock>) {
-        mStockDao.getSingleStocks()
-            .requestIo({
-                var i: Int
-                list.forEach { stock ->
-                    i = it.indexOf(stock)
-                    if (i >= 0) {
-                        it[i].price = stock.price
-                        it[i].changePrice = stock.changePrice
-                    } else {
-                        mStockDao.insert(stock)
-                    }
-                }
-                mStockDao.updateStocks(it)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { }
-            }, {})
-    }
-
     companion object {
         var instance: Storage? = null
     }
@@ -75,13 +55,6 @@ class Storage(applicationContext: Context) {
                 }
             }
         }
-    }
-
-    private fun toMainThread(action: () -> Unit) {
-        Single.fromCallable { }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe { s -> action() }
     }
 
     private fun getAllStocks(
@@ -116,6 +89,26 @@ class Storage(applicationContext: Context) {
                 }
             }
         }
+    }
+
+    private fun updateStocks(list: List<Stock>) {
+        mStockDao.getSingleStocks()
+            .requestIo({
+                var i: Int
+                list.forEach { stock ->
+                    i = it.indexOf(stock)
+                    if (i >= 0) {
+                        it[i].price = stock.price
+                        it[i].changePrice = stock.changePrice
+                    } else {
+                        mStockDao.insert(stock)
+                    }
+                }
+                mStockDao.updateStocks(it)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { }
+            }, {})
     }
 
     private fun saveStocks(stocks: List<Stock>) {
@@ -185,6 +178,12 @@ class Storage(applicationContext: Context) {
     }
 }
 
+private fun toMainThread(action: () -> Unit) {
+    Single.fromCallable { }
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeOn(AndroidSchedulers.mainThread())
+        .subscribe { s -> action() }
+}
 
 private fun <T> Single<T>.requestIo(
     onSuccess: (T) -> Unit,

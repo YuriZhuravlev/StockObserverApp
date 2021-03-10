@@ -116,7 +116,7 @@ class Storage(applicationContext: Context) {
                     toMainThread { mRefreshable?.endRefresh() }
                     Thread.sleep(20_000)
                     toMainThread { mRefreshable?.hideRefresh() }
-                    Thread.sleep(1_200_000)
+                    Thread.sleep(600_000)
                     toMainThread { mRefreshable?.showRefreshButton() }
                 }, {})
         }

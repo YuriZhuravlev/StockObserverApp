@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">StockObserverApp</string>
+    <string name="app_name">StockObserver</string>
     <string name="refresh">Refresh</string>
     <string name="update_time">Updated at</string>
     <string name="stocks">Stocks</string>

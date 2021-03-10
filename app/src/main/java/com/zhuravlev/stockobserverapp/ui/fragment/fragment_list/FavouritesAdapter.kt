@@ -17,7 +17,7 @@ class FavouritesAdapter : StocksAdapter() {
                 i++
             }
         }
-        notifyItemRangeChanged(first, mList.lastIndex)
+        notifyItemRangeChanged(first, mList.size - first)
         super.addList(list)
     }
 }

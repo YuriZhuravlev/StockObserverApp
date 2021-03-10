@@ -1,8 +1,10 @@
 package com.zhuravlev.stockobserverapp.model.moex.converters
 
 import com.zhuravlev.stockobserverapp.model.Stock
+import com.zhuravlev.stockobserverapp.model.moex.ResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.ResponsePriceAllStocksByDate
 import com.zhuravlev.stockobserverapp.model.moex.SecuritiesItem
+import com.zhuravlev.stockobserverapp.model.moex.Security
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -64,5 +66,52 @@ fun parseSecurities(response: List<SecuritiesItem?>): Single<MutableList<Stock>>
         }
         return@fromCallable list
     }.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+}
+
+/**
+ * Новая функциональность
+ */
+fun parseSecurityList(response: List<Security?>): Single<MutableList<Stock>> {
+    return Single.fromCallable {
+        val list = mutableListOf<Stock>()
+        response.forEach {
+            if (it != null && it.prevWaPrice != null) {
+                list.add(
+                    Stock(
+                        it.secId!!,
+                        "https://finnhub.io/api/logo?symbol=${it.secId}.ME",
+                        it.secName ?: it.shortName ?: "",
+                        false,
+                        it.prevWaPrice.toString(),
+                        "",
+                        it.boardId ?: ""
+                    )
+                )
+            }
+        }
+        return@fromCallable list
+    }.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+}
+
+/**
+ * Новая функциональность
+ * @return Map<symbol, Pair<currentPrice, lastChange>>
+ */
+fun parseResponseMarketData(response: List<ResponseMarketData>): Single<Map<String, Pair<String, String>>> {
+    return Single.fromCallable(Callable {
+        val map = mutableMapOf<String, Pair<String, String>>()
+        response.forEach {
+            if (it.marketdata != null) {
+                it.marketdata.forEach { item ->
+                    if (item?.secId != null && item.change != null && item.lCurrentPrice != null) {
+                        map[item.secId] = Pair(item.lCurrentPrice, item.change)
+                    }
+                }
+            }
+        }
+        return@Callable map.toMap()
+    }).subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 }

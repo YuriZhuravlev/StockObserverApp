@@ -85,20 +85,11 @@ class Storage(applicationContext: Context) {
                 if (it.isEmpty()) {
                     mStockDao.insertStocks(list).subscribe { }
                 } else {
-                    var i: Int
                     list.forEach { stock ->
-                        i = it.indexOf(stock)
-                        if (i >= 0) {
-                            it[i].price = stock.price
-                            it[i].changePrice = stock.changePrice
-                        } else {
+                        if (!it.contains(stock)) {
                             mStockDao.insert(stock).subscribe { }
                         }
                     }
-                    mStockDao.updateStocks(it)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { }
                 }
             }, {})
     }

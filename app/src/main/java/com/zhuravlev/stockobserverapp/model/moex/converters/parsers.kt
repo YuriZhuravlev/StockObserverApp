@@ -81,5 +81,6 @@ fun parseResponseCandles(response: List<ResponseCandles>, stock: Stock): Single<
         }
 
         return@fromCallable priceChart
-    }
+    }.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
 }

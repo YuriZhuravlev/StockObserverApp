@@ -2,10 +2,12 @@ package com.zhuravlev.stockobserverapp.storage
 
 import android.content.Context
 import androidx.room.Room
+import com.zhuravlev.stockobserverapp.model.PriceChart
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.moex.ResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.ResponseSecurities
 import com.zhuravlev.stockobserverapp.model.moex.Security
+import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseCandles
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurityList
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
@@ -17,6 +19,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
@@ -180,6 +184,23 @@ class Storage(applicationContext: Context) {
 
     fun setShower(shower: Shower) {
         mShower = shower
+    }
+
+    fun getCandle(stock: Stock, from: Date, onSuccess: (PriceChart) -> Unit) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val date: String = dateFormat.format(from)
+
+        getMoexApiService().getCandles(stock.symbol, date)
+            .requestIo({
+                parseResponseCandles(it, stock).subscribe({ chart ->
+                    onSuccess(chart)
+                }, {
+                    hideError()
+                })
+            }, {
+                hideError()
+            })
     }
 }
 

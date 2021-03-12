@@ -9,9 +9,11 @@ import com.squareup.picasso.Picasso
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
+import java.util.*
 
 open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
     protected var mList = mutableListOf<Stock>()
+    val ruLocale: Boolean = Locale.getDefault().language.equals(Locale("ru").language)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
@@ -30,7 +32,11 @@ open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
         }
         with(mList[position]) {
             holder.title.text = this.symbol
-            holder.description.text = this.description
+            holder.description.text = if (ruLocale) {
+                this.description
+            } else {
+                this.enDescription
+            }
             val text = this.price + " ₽"
             holder.price.text = text
             try {

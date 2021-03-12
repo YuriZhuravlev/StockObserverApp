@@ -9,6 +9,7 @@ import com.zhuravlev.stockobserverapp.model.moex.Security
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurityList
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
+import com.zhuravlev.stockobserverapp.storage.database.MIGRATION_1_2
 import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
 import com.zhuravlev.stockobserverapp.ui.Shower
@@ -27,7 +28,9 @@ class Storage(applicationContext: Context) {
         mDatabase = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "database-stock-observer"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
         mStockDao = mDatabase.stockDao()
         downloadStocks()
     }
@@ -105,8 +108,15 @@ class Storage(applicationContext: Context) {
                     mStockDao.insertStocks(list).subscribe { }
                 } else {
                     list.forEach { stock ->
-                        if (!it.contains(stock)) {
+                        val index = it.indexOf(stock)
+                        if (index == -1) {
                             mStockDao.insert(stock).subscribe { }
+                        } else {
+                            if (it[index].enDescription != stock.enDescription || it[index].description != stock.description) {
+                                it[index].enDescription = stock.enDescription
+                                it[index].description = stock.description
+                                mStockDao.update(it[index]).subscribe { }
+                            }
                         }
                     }
                 }

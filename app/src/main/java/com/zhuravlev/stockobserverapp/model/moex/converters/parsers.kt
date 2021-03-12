@@ -85,7 +85,8 @@ fun parseSecurityList(response: List<Security?>): Single<MutableList<Stock>> {
                         false,
                         it.prevWaPrice.toString(),
                         "",
-                        it.boardId ?: ""
+                        it.boardId ?: "",
+                        it.latName ?: ""
                     )
                 )
             }

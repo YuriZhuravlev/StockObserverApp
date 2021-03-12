@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.storage.Search
 import com.zhuravlev.stockobserverapp.storage.Storage
@@ -39,9 +40,18 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
         }
     }
 
+    private fun refreshListener(swipeRefreshLayout: SwipeRefreshLayout) {
+        Storage.instance!!.updatePricesCallback {
+            swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
     private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
         holder.adapter = FavouritesAdapter()
         holder.recyclerView.adapter = holder.adapter
+        holder.swipeRefreshLayout.setOnRefreshListener {
+            refreshListener(holder.swipeRefreshLayout)
+        }
         mQuery.subscribe { query ->
             mFavouriteDisposable?.dispose()
             holder.adapter.clearList()
@@ -55,6 +65,9 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
         holder.adapter = StocksAdapter()
         holder.recyclerView.adapter = holder.adapter
+        holder.swipeRefreshLayout.setOnRefreshListener {
+            refreshListener(holder.swipeRefreshLayout)
+        }
         mQuery.subscribe { query ->
             mStockDisposable?.dispose()
             holder.adapter.clearList()

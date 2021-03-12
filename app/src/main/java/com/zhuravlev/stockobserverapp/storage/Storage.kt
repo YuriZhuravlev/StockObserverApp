@@ -11,7 +11,7 @@ import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurityList
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
 import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
-import com.zhuravlev.stockobserverapp.ui.Refreshable
+import com.zhuravlev.stockobserverapp.ui.Shower
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -20,7 +20,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class Storage(applicationContext: Context) {
     private val mDatabase: AppDatabase
     private val mStockDao: StockDAO
-    private var mRefreshable: Refreshable? = null
+    private var mShower: Shower? = null
 
     init {
         instance = this
@@ -37,25 +37,44 @@ class Storage(applicationContext: Context) {
     }
 
     private fun getIoPrice(
-        onSuccess: (List<ResponseMarketData>) -> Unit
+        onSuccess: (List<ResponseMarketData>) -> Unit,
+        onError: (Throwable) -> Unit
     ) {
-        getMoexApiService().getMarketData().requestIo(onSuccess, {})
+        getMoexApiService().getMarketData().requestIo(onSuccess, onError)
+    }
+
+    fun showError(throwable: Throwable) {
+        // TODO
+        toMainThread { mShower?.showError(throwable.message ?: "Error") }
+    }
+
+    fun hideError() {
+        toMainThread { mShower?.hideError() }
     }
 
     fun updatePrices() {
-        toMainThread { mRefreshable?.startRefresh() }
-        getIoPrice {
+        getIoPrice({
             parseResponseMarketData(it).requestIo({ map ->
                 synchronizePriceStocks(map).requestIo({}, {})
-            }, {})
-        }
+            }, { showError(it) })
+        }, { showError(it) })
+    }
+
+    fun updatePricesCallback(onEnd: () -> Unit) {
+        getIoPrice({
+            parseResponseMarketData(it)
+                .subscribe({ map ->
+                    synchronizePriceStocks(map)
+                        .subscribe({ onEnd() }, { showError(it);onEnd() })
+                }, { showError(it);onEnd() })
+        }, { showError(it);onEnd() })
     }
 
     private fun getAllStocks(
         onSuccess: (List<ResponseSecurities>) -> Unit
     ) {
         getMoexApiService().getSecurities()
-            .requestIo(onSuccess, { mRefreshable?.showError(it.message ?: "error") })
+            .requestIo(onSuccess, { showError(it) })
     }
 
     /**
@@ -91,7 +110,7 @@ class Storage(applicationContext: Context) {
                         }
                     }
                 }
-            }, {})
+            }, { showError(it) })
     }
 
     private fun saveStocks(stocks: List<Stock>) {
@@ -113,12 +132,8 @@ class Storage(applicationContext: Context) {
                         }
                     }
                     saveStocks(it)
-                    toMainThread { mRefreshable?.endRefresh() }
-                    Thread.sleep(20_000)
-                    toMainThread { mRefreshable?.hideRefresh() }
-                    Thread.sleep(600_000)
-                    toMainThread { mRefreshable?.showRefreshButton() }
-                }, {})
+                    hideError()
+                }, { showError(it) })
         }
     }
 
@@ -150,11 +165,11 @@ class Storage(applicationContext: Context) {
         mStockDao.update(stock)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { }
+            .subscribe { hideError() }
     }
 
-    fun setRefreshable(refreshable: Refreshable) {
-        mRefreshable = refreshable
+    fun setShower(shower: Shower) {
+        mShower = shower
     }
 }
 

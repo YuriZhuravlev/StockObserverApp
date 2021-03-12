@@ -85,4 +85,10 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     override fun getItemViewType(position: Int): Int {
         return position
     }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        mFavouriteDisposable?.dispose()
+        mStockDisposable?.dispose()
+        super.onDetachedFromRecyclerView(recyclerView)
+    }
 }

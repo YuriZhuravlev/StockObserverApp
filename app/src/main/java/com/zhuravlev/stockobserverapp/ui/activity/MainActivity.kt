@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), Shower {
     }
 
     override fun showError(message: String) {
-        mTextInfo.text = message
+        mTextInfo.text = getString(R.string.connection_error)
         mTextInfo.visibility = View.VISIBLE
     }
 

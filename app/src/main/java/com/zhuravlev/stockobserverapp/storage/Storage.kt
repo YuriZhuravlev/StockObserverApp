@@ -44,7 +44,7 @@ class Storage(applicationContext: Context) {
     }
 
     fun showError(throwable: Throwable) {
-        // TODO
+        // Здесь можно обрабатывать различные ошибки, но сейчас актуальны только ошибки с подключением
         toMainThread { mShower?.showError(throwable.message ?: "Error") }
     }
 

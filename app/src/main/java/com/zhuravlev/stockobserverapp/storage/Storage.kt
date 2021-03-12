@@ -39,6 +39,15 @@ class Storage(applicationContext: Context) {
         var instance: Storage? = null
     }
 
+    private fun showError(throwable: Throwable) {
+        // Здесь можно обрабатывать различные ошибки, но сейчас актуальны только ошибки с подключением
+        toMainThread { mShower?.showError(throwable.message ?: "Error") }
+    }
+
+    private fun hideError() {
+        toMainThread { mShower?.hideError() }
+    }
+
     private fun getIoPrice(
         onSuccess: (List<ResponseMarketData>) -> Unit,
         onError: (Throwable) -> Unit
@@ -46,16 +55,7 @@ class Storage(applicationContext: Context) {
         getMoexApiService().getMarketData().requestIo(onSuccess, onError)
     }
 
-    fun showError(throwable: Throwable) {
-        // Здесь можно обрабатывать различные ошибки, но сейчас актуальны только ошибки с подключением
-        toMainThread { mShower?.showError(throwable.message ?: "Error") }
-    }
-
-    fun hideError() {
-        toMainThread { mShower?.hideError() }
-    }
-
-    fun updatePrices() {
+    private fun updatePrices() {
         getIoPrice({
             parseResponseMarketData(it).requestIo({ map ->
                 synchronizePriceStocks(map).requestIo({}, {})

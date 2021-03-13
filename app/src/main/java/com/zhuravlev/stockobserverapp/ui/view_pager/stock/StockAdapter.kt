@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -13,6 +12,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
+import com.zhuravlev.stockobserverapp.ui.view.ChartMarkerView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,13 +51,11 @@ class StockAdapter(val stock: Stock) : RecyclerView.Adapter<StockViewHolder>() {
             val lineDataSetLow = LineDataSet(entriesLow, "Low price")
 
             lineDataSetHigh.color = Color.RED
-            lineDataSetHigh.lineWidth = 2f
-            lineDataSetHigh.circleRadius = 1f
+            lineDataSetHigh.lineWidth = 1f
             lineDataSetHigh.setCircleColor(Color.RED)
 
             lineDataSetLow.color = Color.GREEN
-            lineDataSetLow.lineWidth = 2f
-            lineDataSetHigh.circleRadius = 1f
+            lineDataSetLow.lineWidth = 1f
             lineDataSetHigh.setCircleColor(Color.GREEN)
 
             val iLineDataSets: MutableList<ILineDataSet> =
@@ -67,23 +65,28 @@ class StockAdapter(val stock: Stock) : RecyclerView.Adapter<StockViewHolder>() {
 
             lineDataSetHigh.setDrawCircles(false)
             lineDataSetHigh.axisDependency = YAxis.AxisDependency.LEFT
+            lineDataSetHigh.setDrawFilled(true)
+            lineDataSetHigh.fillColor = Color.DKGRAY
 
             lineDataSetLow.setDrawCircles(false)
             lineDataSetLow.axisDependency = YAxis.AxisDependency.LEFT
+            lineDataSetLow.setDrawFilled(true)
+            lineDataSetLow.fillAlpha = 255
+            lineDataSetLow.fillColor = Color.WHITE
 
             with(holder.chart) {
-                this.setMaxVisibleValueCount(60)
+                this.marker = ChartMarkerView(this.context, R.layout.view_marker)
+                this.setMaxVisibleValueCount(24)
 
+                this.description.isEnabled = false
+                this.legend.isEnabled = false
                 this.setPinchZoom(false)
+                this.setTouchEnabled(true)
+                this.isDoubleTapToZoomEnabled = false
                 this.setDrawGridBackground(false)
-                val xAxis = this.xAxis
-                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                xAxis.setDrawGridLines(false)
+                this.xAxis.isEnabled = false
 
-                val yAxis = this.axisLeft
-                yAxis.setLabelCount(7, false)
-                yAxis.setDrawGridLines(false)
-                yAxis.setDrawAxisLine(false)
+                this.axisLeft.isEnabled = false
 
                 this.axisRight.isEnabled = false
 

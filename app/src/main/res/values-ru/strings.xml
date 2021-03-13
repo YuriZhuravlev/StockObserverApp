@@ -7,4 +7,5 @@
     <string name="refreshing">Обновление</string>
     <string name="search_hint">Найти компанию или тикер</string>
     <string name="connection_error">Ошибка подключения. Проверьте интернет соединение.</string>
+    <string name="chart">График цен</string>
 </resources>

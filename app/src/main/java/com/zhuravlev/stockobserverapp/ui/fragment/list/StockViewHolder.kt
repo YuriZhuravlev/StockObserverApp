@@ -1,4 +1,4 @@
-package com.zhuravlev.stockobserverapp.ui.fragment.fragment_list
+package com.zhuravlev.stockobserverapp.ui.fragment.list
 
 import android.view.View
 import android.widget.ImageView

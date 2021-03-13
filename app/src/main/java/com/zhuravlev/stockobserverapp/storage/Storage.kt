@@ -1,7 +1,5 @@
 package com.zhuravlev.stockobserverapp.storage
 
-import android.content.Context
-import androidx.room.Room
 import com.zhuravlev.stockobserverapp.model.PriceChart
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.moex.ResponseMarketData
@@ -11,7 +9,6 @@ import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseCandles
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurityList
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
-import com.zhuravlev.stockobserverapp.storage.database.MIGRATION_1_2
 import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
 import com.zhuravlev.stockobserverapp.ui.Shower
@@ -22,19 +19,12 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 
-class Storage(applicationContext: Context) {
-    private val mDatabase: AppDatabase
+class Storage(private val mDatabase: AppDatabase) {
     private val mStockDao: StockDAO
     private var mShower: Shower? = null
 
     init {
         instance = this
-        mDatabase = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "database-stock-observer"
-        )
-            .addMigrations(MIGRATION_1_2)
-            .build()
         mStockDao = mDatabase.stockDao()
         downloadStocks()
     }
@@ -182,7 +172,7 @@ class Storage(applicationContext: Context) {
             .subscribe { hideError() }
     }
 
-    fun setShower(shower: Shower) {
+    fun setShower(shower: Shower?) {
         mShower = shower
     }
 

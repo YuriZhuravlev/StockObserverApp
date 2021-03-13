@@ -1,4 +1,4 @@
-package com.zhuravlev.stockobserverapp.ui.fragment.fragment_list
+package com.zhuravlev.stockobserverapp.ui.fragment.list
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import com.squareup.picasso.Picasso
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
+import com.zhuravlev.stockobserverapp.ui.activity.MainPresenter
 import java.util.*
 
 open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
@@ -62,7 +63,9 @@ open class StocksAdapter : RecyclerView.Adapter<StockViewHolder>() {
                 holder.star.isSelected = this.star
                 Storage.instance!!.changeStock(this)
             }
-            holder.view.setOnClickListener { }
+            holder.view.setOnClickListener {
+                MainPresenter.instance?.setChart(this)
+            }
         }
     }
 

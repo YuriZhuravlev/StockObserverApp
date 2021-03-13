@@ -1,22 +1,20 @@
-package com.zhuravlev.stockobserverapp.ui.view_pager
+package com.zhuravlev.stockobserverapp.ui.view_pager.stocks
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.storage.Search
 import com.zhuravlev.stockobserverapp.storage.Storage
-import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.FavouritesAdapter
-import com.zhuravlev.stockobserverapp.ui.fragment.fragment_list.StocksAdapter
+import com.zhuravlev.stockobserverapp.ui.fragment.list.FavouritesAdapter
+import com.zhuravlev.stockobserverapp.ui.fragment.list.StocksAdapter
 import io.reactivex.rxjava3.disposables.Disposable
 
 private const val STOCKS = 0
 private const val FAVOURITE = 1
 
-class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewHolder>() {
-    private val mList = list
+class FragmentAdapter() : RecyclerView.Adapter<FragmentViewHolder>() {
     private var mStockDisposable: Disposable? = null
     private var mFavouriteDisposable: Disposable? = null
     private val mQuery = Search.instance.getQueryObservable()
@@ -30,10 +28,10 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     override fun onBindViewHolder(holder: FragmentViewHolder, position: Int) {
         when (getItemViewType(position)) {
             STOCKS -> {
-                initStocks(holder, mList[position])
+                initStocks(holder)
             }
             FAVOURITE -> {
-                initFavourite(holder, mList[position])
+                initFavourite(holder)
             }
             else -> {
             }
@@ -46,7 +44,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
         }
     }
 
-    private fun initFavourite(holder: FragmentViewHolder, item: Fragment) {
+    private fun initFavourite(holder: FragmentViewHolder) {
         holder.adapter = FavouritesAdapter()
         holder.recyclerView.adapter = holder.adapter
         holder.swipeRefreshLayout.setOnRefreshListener {
@@ -62,7 +60,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
         Search.instance.getQuery()
     }
 
-    private fun initStocks(holder: FragmentViewHolder, item: Fragment) {
+    private fun initStocks(holder: FragmentViewHolder) {
         holder.adapter = StocksAdapter()
         holder.recyclerView.adapter = holder.adapter
         holder.swipeRefreshLayout.setOnRefreshListener {
@@ -79,7 +77,7 @@ class FragmentAdapter(list: List<Fragment>) : RecyclerView.Adapter<FragmentViewH
     }
 
     override fun getItemCount(): Int {
-        return mList.size
+        return 2
     }
 
     override fun getItemViewType(position: Int): Int {

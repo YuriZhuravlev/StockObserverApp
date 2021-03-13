@@ -119,15 +119,21 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     override fun initStockLists() {
-        mTabLayoutMediatorStock.detach()
+        if (mTabLayoutMediatorStock.isAttached) {
+            mTabLayoutMediatorStock.detach()
+        }
         mChartToolbar.visibility = View.GONE
         mMainToolbar.visibility = View.VISIBLE
         mViewPager.adapter = FragmentAdapter()
-        mTabLayoutMediatorStocks.attach()
+        if (!mTabLayoutMediatorStocks.isAttached) {
+            mTabLayoutMediatorStocks.attach()
+        }
     }
 
     override fun initStock(stock: Stock) {
-        mTabLayoutMediatorStocks.detach()
+        if (mTabLayoutMediatorStocks.isAttached) {
+            mTabLayoutMediatorStocks.detach()
+        }
         mTitle.text = stock.symbol
         mDescription.text = if (ruLocale) {
             stock.description
@@ -138,6 +144,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         mMainToolbar.visibility = View.GONE
         mChartToolbar.visibility = View.VISIBLE
         mViewPager.adapter = StockAdapter(stock)
-        mTabLayoutMediatorStock.attach()
+        if (!mTabLayoutMediatorStock.isAttached) {
+            mTabLayoutMediatorStock.attach()
+        }
     }
 }

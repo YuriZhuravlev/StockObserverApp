@@ -7,7 +7,7 @@ import moxy.viewstate.strategy.alias.SingleState
 
 interface MainView : MvpView {
     @AddToEndSingle
-    fun initStockLists()
+    fun initStockLists(item: Int)
 
     @AddToEndSingle
     fun initStock(stock: Stock)

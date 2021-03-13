@@ -7,6 +7,7 @@ import moxy.MvpPresenter
 
 class MainPresenter : MvpPresenter<MainView>(), Shower {
     var stocksScreen = true
+    var stocksItem = 0
     var stock: Stock? = null
 
     override fun attachView(view: MainView?) {
@@ -14,7 +15,7 @@ class MainPresenter : MvpPresenter<MainView>(), Shower {
         instance = this
         Storage.instance?.setShower(this)
         if (stocksScreen) {
-            viewState.initStockLists()
+            viewState.initStockLists(stocksItem)
         } else {
             viewState.initStock(stock!!)
         }
@@ -41,7 +42,7 @@ class MainPresenter : MvpPresenter<MainView>(), Shower {
     fun setStockList() {
         stock = null
         stocksScreen = true
-        viewState.initStockLists()
+        viewState.initStockLists(stocksItem)
     }
 
     fun setChart(stock: Stock) {

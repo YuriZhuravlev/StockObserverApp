@@ -118,13 +118,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         mTextInfo.visibility = View.GONE
     }
 
-    override fun initStockLists() {
+    override fun initStockLists(item: Int) {
         if (mTabLayoutMediatorStock.isAttached) {
             mTabLayoutMediatorStock.detach()
         }
         mChartToolbar.visibility = View.GONE
         mMainToolbar.visibility = View.VISIBLE
         mViewPager.adapter = FragmentAdapter()
+        mViewPager.currentItem = item
         if (!mTabLayoutMediatorStocks.isAttached) {
             mTabLayoutMediatorStocks.attach()
         }
@@ -132,6 +133,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun initStock(stock: Stock) {
         if (mTabLayoutMediatorStocks.isAttached) {
+            mPresenter.stocksItem = mViewPager.currentItem
             mTabLayoutMediatorStocks.detach()
         }
         mTitle.text = stock.symbol

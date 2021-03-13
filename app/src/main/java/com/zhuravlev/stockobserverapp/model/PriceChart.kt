@@ -14,10 +14,10 @@ class PriceChart(val stock: Stock) {
     ) : Comparable<Item> {
         override fun compareTo(other: Item): Int {
             return if (this.date.after(other.date)) {
-                -1
+                1
             } else {
                 if (this.date.before(other.date)) {
-                    1
+                    -1
                 } else {
                     0
                 }

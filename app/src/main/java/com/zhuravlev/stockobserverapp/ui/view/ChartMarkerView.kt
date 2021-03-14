@@ -34,8 +34,7 @@ class ChartMarkerView(context: Context?, priceChart: PriceChart) :
     private var mOffset: MPPointF? = null
     override fun getOffset(): MPPointF {
         if (mOffset == null) {
-            // center the marker horizontally and vertically
-            mOffset = MPPointF((-(width / 2)).toFloat(), (-height - 50).toFloat())
+            mOffset = MPPointF((-(width / 2)).toFloat(), (-height - 150).toFloat())
         }
         return mOffset!!
     }

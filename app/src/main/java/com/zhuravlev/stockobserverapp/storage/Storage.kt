@@ -1,33 +1,30 @@
 package com.zhuravlev.stockobserverapp.storage
 
-import android.content.Context
-import androidx.room.Room
+import com.zhuravlev.stockobserverapp.model.PriceChart
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.model.moex.ResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.ResponseSecurities
 import com.zhuravlev.stockobserverapp.model.moex.Security
+import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseCandles
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseResponseMarketData
 import com.zhuravlev.stockobserverapp.model.moex.converters.parseSecurityList
 import com.zhuravlev.stockobserverapp.storage.database.AppDatabase
 import com.zhuravlev.stockobserverapp.storage.database.StockDAO
 import com.zhuravlev.stockobserverapp.storage.net.getMoexApiService
-import com.zhuravlev.stockobserverapp.ui.Refreshable
+import com.zhuravlev.stockobserverapp.ui.Shower
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.util.*
 
-class Storage(applicationContext: Context) {
-    private val mDatabase: AppDatabase
+class Storage(private val mDatabase: AppDatabase) {
     private val mStockDao: StockDAO
-    private var mRefreshable: Refreshable? = null
+    private var mShower: Shower? = null
 
     init {
         instance = this
-        mDatabase = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "database-stock-observer"
-        ).build()
         mStockDao = mDatabase.stockDao()
         downloadStocks()
     }
@@ -36,26 +33,45 @@ class Storage(applicationContext: Context) {
         var instance: Storage? = null
     }
 
-    private fun getIoPrice(
-        onSuccess: (List<ResponseMarketData>) -> Unit
-    ) {
-        getMoexApiService().getMarketData().requestIo(onSuccess, {})
+    private fun showError(throwable: Throwable) {
+        // Здесь можно обрабатывать различные ошибки, но сейчас актуальны только ошибки с подключением
+        toMainThread { mShower?.showError(throwable.message ?: "Error") }
     }
 
-    fun updatePrices() {
-        toMainThread { mRefreshable?.startRefresh() }
-        getIoPrice {
+    private fun hideError() {
+        toMainThread { mShower?.hideError() }
+    }
+
+    private fun getIoPrice(
+        onSuccess: (List<ResponseMarketData>) -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        getMoexApiService().getMarketData().requestIo(onSuccess, onError)
+    }
+
+    private fun updatePrices() {
+        getIoPrice({
             parseResponseMarketData(it).requestIo({ map ->
                 synchronizePriceStocks(map).requestIo({}, {})
-            }, {})
-        }
+            }, { showError(it) })
+        }, { showError(it) })
+    }
+
+    fun updatePricesCallback(onEnd: () -> Unit) {
+        getIoPrice({
+            parseResponseMarketData(it)
+                .subscribe({ map ->
+                    synchronizePriceStocks(map)
+                        .subscribe({ onEnd() }, { showError(it);onEnd() })
+                }, { showError(it);onEnd() })
+        }, { showError(it);onEnd() })
     }
 
     private fun getAllStocks(
         onSuccess: (List<ResponseSecurities>) -> Unit
     ) {
         getMoexApiService().getSecurities()
-            .requestIo(onSuccess, { mRefreshable?.showError(it.message ?: "error") })
+            .requestIo(onSuccess, { showError(it) })
     }
 
     /**
@@ -86,12 +102,19 @@ class Storage(applicationContext: Context) {
                     mStockDao.insertStocks(list).subscribe { }
                 } else {
                     list.forEach { stock ->
-                        if (!it.contains(stock)) {
+                        val index = it.indexOf(stock)
+                        if (index == -1) {
                             mStockDao.insert(stock).subscribe { }
+                        } else {
+                            if (it[index].enDescription != stock.enDescription || it[index].description != stock.description) {
+                                it[index].enDescription = stock.enDescription
+                                it[index].description = stock.description
+                                mStockDao.update(it[index]).subscribe { }
+                            }
                         }
                     }
                 }
-            }, {})
+            }, { showError(it) })
     }
 
     private fun saveStocks(stocks: List<Stock>) {
@@ -113,12 +136,8 @@ class Storage(applicationContext: Context) {
                         }
                     }
                     saveStocks(it)
-                    toMainThread { mRefreshable?.endRefresh() }
-                    Thread.sleep(20_000)
-                    toMainThread { mRefreshable?.hideRefresh() }
-                    Thread.sleep(600_000)
-                    toMainThread { mRefreshable?.showRefreshButton() }
-                }, {})
+                    hideError()
+                }, { showError(it) })
         }
     }
 
@@ -150,11 +169,28 @@ class Storage(applicationContext: Context) {
         mStockDao.update(stock)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { }
+            .subscribe { hideError() }
     }
 
-    fun setRefreshable(refreshable: Refreshable) {
-        mRefreshable = refreshable
+    fun setShower(shower: Shower?) {
+        mShower = shower
+    }
+
+    fun getCandle(stock: Stock, from: Date, onSuccess: (PriceChart) -> Unit) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val date: String = dateFormat.format(from)
+
+        getMoexApiService().getCandles(stock.symbol, date)
+            .requestIo({
+                parseResponseCandles(it, stock).subscribe({ chart ->
+                    onSuccess(chart)
+                }, {
+                    hideError()
+                })
+            }, {
+                hideError()
+            })
     }
 }
 

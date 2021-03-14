@@ -26,7 +26,7 @@ interface StockDAO {
     @Query("SELECT * FROM stock WHERE stock.symbol == :symbol")
     fun getStockBySymbol(symbol: String): Single<Stock>
 
-    @Query("SELECT * FROM stock WHERE (stock.symbol LIKE :query OR stock.description LIKE :query) ORDER BY stock.symbol")
+    @Query("SELECT * FROM stock WHERE (stock.symbol LIKE :query OR stock.description LIKE :query OR stock.enDescription LIKE :query) ORDER BY stock.symbol")
     fun getStocksByQuery(query: String): Flowable<MutableList<Stock>>
 
     @Query("SELECT * FROM stock ORDER BY stock.symbol")
@@ -38,6 +38,6 @@ interface StockDAO {
     @Query("SELECT * FROM stock WHERE stock.star == 1 ORDER BY stock.symbol")
     fun getFavouritesStocks(): Flowable<MutableList<Stock>>
 
-    @Query("SELECT * FROM stock WHERE stock.star == 1 AND (stock.symbol LIKE :query OR stock.description LIKE :query) ORDER BY stock.symbol")
+    @Query("SELECT * FROM stock WHERE stock.star == 1 AND (stock.symbol LIKE :query OR stock.description LIKE :query OR stock.enDescription LIKE :query) ORDER BY stock.symbol")
     fun getFavouritesStocksByQuery(query: String): Flowable<MutableList<Stock>>
 }

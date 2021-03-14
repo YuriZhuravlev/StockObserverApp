@@ -2,13 +2,13 @@ package com.zhuravlev.stockobserverapp.model.moex
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponsePricesBySymbol(
+data class ResponseCandles(
 
 	@field:SerializedName("candles")
-	val candles: List<CandlesItem?>? = null
+	val candles: List<Candle?>? = null
 )
 
-data class CandlesItem(
+data class Candle(
 
 	@field:SerializedName("volume")
 	val volume: Int? = null,

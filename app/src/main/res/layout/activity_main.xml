@@ -9,44 +9,39 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <include
             android:id="@+id/main_toolbar"
             layout="@layout/toolbar_main" />
 
+        <include
+            android:id="@+id/chart_toolbar"
+            layout="@layout/toolbar_chart"
+            app:layout_scrollInterpolator="@string/appbar_scrolling_view_behavior"
+            android:visibility="gone" />
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/main_tab"
-            app:tabGravity="start"
-            android:layout_gravity="start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            app:tabGravity="start"
             app:tabIndicatorHeight="0dp"
             app:tabMode="fixed" />
 
         <TextView
             android:id="@+id/main_text_info"
-            android:visibility="gone"
-            android:background="@color/white"
-            android:textAlignment="center"
-            android:layout_gravity="bottom"
-            app:layout_anchorGravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/design_default_color_error"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_anchorGravity="bottom" />
     </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/main_refresh_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/main_view_pager"
-        android:layout_gravity="bottom|center"
-        android:text="@string/refresh"
-        app:icon="@drawable/ic_refresh"
-        android:visibility="gone"
-        android:backgroundTint="@color/white"
-        app:layout_anchorGravity="center_horizontal" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/main_view_pager"

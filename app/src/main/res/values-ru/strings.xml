@@ -6,4 +6,8 @@
     <string name="favourites">Избранное</string>
     <string name="refreshing">Обновление</string>
     <string name="search_hint">Найти компанию или тикер</string>
+    <string name="connection_error">Ошибка подключения. Проверьте интернет соединение.</string>
+    <string name="chart">График цен</string>
+    <string name="volume">Объем</string>
+    <string name="loading">Загрузка</string>
 </resources>

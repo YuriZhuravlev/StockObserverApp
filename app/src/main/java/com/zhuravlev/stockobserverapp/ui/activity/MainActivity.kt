@@ -33,7 +33,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     private lateinit var mStar: ImageView
     private lateinit var mBackspace: ImageView
     private lateinit var mQueryListener: QueryListener
-    val ruLocale: Boolean = Locale.getDefault().language.equals(Locale("ru").language)
+    private val mFragmentAdapter = FragmentAdapter()
+    private val ruLocale: Boolean = Locale.getDefault().language.equals(Locale("ru").language)
 
     @InjectPresenter
     lateinit var mPresenter: MainPresenter
@@ -124,7 +125,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
         mChartToolbar.visibility = View.GONE
         mMainToolbar.visibility = View.VISIBLE
-        mViewPager.adapter = FragmentAdapter()
+        mViewPager.adapter = mFragmentAdapter
         mViewPager.currentItem = item
         if (!mTabLayoutMediatorStocks.isAttached) {
             mTabLayoutMediatorStocks.attach()

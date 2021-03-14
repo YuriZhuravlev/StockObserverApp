@@ -8,8 +8,10 @@
     <color name="black">#1A1A1A</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_pressed">#FFEFEFEF</color>
+    <color name="light_grey">#C8C8C8</color>
     <color name="background">#F0F4F7</color>
     <color name="background_pressed">#E0E4E7</color>
+    <color name="dark_background">#1A1A1A</color>
     <color name="grey">#BABABA</color>
     <color name="yellow">#FFCA1C</color>
     <color name="green">#24B25D</color>

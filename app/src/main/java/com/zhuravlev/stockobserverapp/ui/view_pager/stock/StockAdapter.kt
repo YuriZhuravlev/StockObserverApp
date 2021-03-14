@@ -75,7 +75,7 @@ class StockAdapter(val stock: Stock) : RecyclerView.Adapter<StockViewHolder>() {
             lineDataSetLow.fillColor = Color.WHITE
 
             with(holder.chart) {
-                this.marker = ChartMarkerView(this.context, R.layout.view_marker)
+                this.marker = ChartMarkerView(this.context, priceChart)
                 this.setMaxVisibleValueCount(24)
 
                 this.description.isEnabled = false

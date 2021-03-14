@@ -8,4 +8,5 @@
     <string name="search_hint">Find company or ticker</string>
     <string name="connection_error">Connection error. Check your internet connection.</string>
     <string name="chart">Price chart</string>
+    <string name="volume">Volume</string>
 </resources>

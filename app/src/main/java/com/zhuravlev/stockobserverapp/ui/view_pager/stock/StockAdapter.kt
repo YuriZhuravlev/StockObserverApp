@@ -13,7 +13,6 @@ import com.zhuravlev.stockobserverapp.R
 import com.zhuravlev.stockobserverapp.model.Stock
 import com.zhuravlev.stockobserverapp.storage.Storage
 import com.zhuravlev.stockobserverapp.ui.view.ChartMarkerView
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val CHART = 0
@@ -34,17 +33,17 @@ class StockAdapter(val stock: Stock) : RecyclerView.Adapter<StockViewHolder>() {
     }
 
     private fun initChart(holder: StockViewHolder) {
+        holder.chart.setNoDataText(holder.chart.context.getString(R.string.loading))
         val calendar = GregorianCalendar.getInstance()
         calendar.time = Date()
         calendar.roll(Calendar.YEAR, -1)
         Storage.instance?.getCandle(stock, calendar.time) { priceChart ->
-            val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val entriesHigh = mutableListOf<Entry>()
             val entriesLow = mutableListOf<Entry>()
             var d = 0f
             priceChart.list.forEach {
-                entriesHigh.add(Entry(d, it.highPrice.toFloat(), dateFormat.format(it.date)))
-                entriesLow.add(Entry(d, it.lowPrice.toFloat(), dateFormat.format(it.date)))
+                entriesHigh.add(Entry(d, it.highPrice.toFloat()))
+                entriesLow.add(Entry(d, it.lowPrice.toFloat()))
                 d += 1f
             }
             val lineDataSetHigh = LineDataSet(entriesHigh, "High price")
@@ -63,20 +62,29 @@ class StockAdapter(val stock: Stock) : RecyclerView.Adapter<StockViewHolder>() {
             val lineData = LineData(iLineDataSets)
 
 
+            lineDataSetHigh.color = Color.RED
+            lineDataSetHigh.lineWidth = 1f
             lineDataSetHigh.setDrawCircles(false)
             lineDataSetHigh.axisDependency = YAxis.AxisDependency.LEFT
             lineDataSetHigh.setDrawFilled(true)
             lineDataSetHigh.fillColor = Color.DKGRAY
+            lineDataSetHigh.setDrawHorizontalHighlightIndicator(false)
+            lineDataSetHigh.highLightColor = Color.BLACK
 
+            lineDataSetLow.color = Color.GREEN
+            lineDataSetLow.lineWidth = 1f
             lineDataSetLow.setDrawCircles(false)
             lineDataSetLow.axisDependency = YAxis.AxisDependency.LEFT
             lineDataSetLow.setDrawFilled(true)
             lineDataSetLow.fillAlpha = 255
             lineDataSetLow.fillColor = Color.WHITE
+            lineDataSetLow.setDrawHorizontalHighlightIndicator(false)
+            lineDataSetLow.highLightColor = Color.BLACK
 
             with(holder.chart) {
                 this.marker = ChartMarkerView(this.context, priceChart)
                 this.setMaxVisibleValueCount(24)
+                this.animateX(400)
 
                 this.description.isEnabled = false
                 this.legend.isEnabled = false

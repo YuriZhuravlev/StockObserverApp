@@ -31,7 +31,7 @@
 
         <TextView
             android:id="@+id/main_text_info"
-            style="Theme.StockObserverApp.InfoText"
+            style="@style/Theme.StockObserverApp.InfoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

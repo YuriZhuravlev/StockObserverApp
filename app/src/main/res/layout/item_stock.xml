@@ -1,69 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="68dp"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_item_stock"
     android:layout_margin="@dimen/app_margin">
 
     <ImageView
         android:id="@+id/item_stock_image"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_margin="@dimen/app_margin"
-        android:cropToPadding="true"
+        style="@style/Theme.StockObserverApp.ImageStock"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/item_stock_title"
+        style="@style/Theme.StockObserverApp.ItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/title_margin"
-        style="@style/ItemTitle"
-        tools:text="SNKG"
         app:layout_constraintStart_toEndOf="@+id/item_stock_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="SNKG" />
 
     <TextView
         android:id="@+id/item_stock_description"
+        style="@style/Theme.StockObserverApp.ItemText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/ItemText"
-        tools:text="Description LTD"
         app:layout_constraintStart_toStartOf="@+id/item_stock_title"
-        app:layout_constraintTop_toBottomOf="@id/item_stock_title" />
+        app:layout_constraintTop_toBottomOf="@id/item_stock_title"
+        tools:text="Description LTD" />
 
     <ImageView
         android:id="@+id/item_stock_star"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/ic_favourite"
+        android:layout_width="@dimen/size_star"
+        android:layout_height="@dimen/size_star"
         android:layout_marginStart="@dimen/app_margin"
-        app:layout_constraintTop_toTopOf="@id/item_stock_title"
+        android:src="@drawable/ic_favourite"
         app:layout_constraintBottom_toBottomOf="@id/item_stock_title"
-        app:layout_constraintStart_toEndOf="@id/item_stock_title" />
+        app:layout_constraintStart_toEndOf="@id/item_stock_title"
+        app:layout_constraintTop_toTopOf="@id/item_stock_title" />
 
     <TextView
         android:id="@+id/item_stock_price"
+        style="@style/Theme.StockObserverApp.ItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="$1.33"
-        style="@style/ItemTitle"
-        android:textAlignment="viewEnd"
         android:layout_marginEnd="@dimen/item_end_margin"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toBottomOf="@id/item_stock_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/item_stock_title" />
+        tools:text="$1.33" />
 
     <TextView
         android:id="@+id/item_stock_change_price"
+        style="@style/Theme.StockObserverApp.ItemText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="+1.4%"
-        style="@style/ItemText"
         android:textAlignment="viewEnd"
         android:textColor="@color/green"
         app:layout_constraintBottom_toBottomOf="@+id/item_stock_description"
-        app:layout_constraintEnd_toEndOf="@+id/item_stock_price" />
+        app:layout_constraintEnd_toEndOf="@+id/item_stock_price"
+        tools:text="+1.4%" />
 </androidx.constraintlayout.widget.ConstraintLayout>

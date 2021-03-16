@@ -3,31 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="@dimen/app_margin"
     android:background="@drawable/background_marker"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/app_margin">
 
     <TextView
         android:id="@+id/marker_price"
+        style="@style/Theme.StockObserverApp.MarkerPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
         tools:text="24.4 - 42.1" />
 
     <TextView
         android:id="@+id/marker_volume"
+        style="@style/Theme.StockObserverApp.MarkerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/light_grey"
         tools:text="volume 684" />
 
     <TextView
         android:id="@+id/marker_date"
+        style="@style/Theme.StockObserverApp.MarkerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/light_grey"
         tools:text="24 August 2020" />
 </LinearLayout>

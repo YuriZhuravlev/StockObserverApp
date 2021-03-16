@@ -9,7 +9,7 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/toolbar_search_view"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/height_search"
         android:layout_marginHorizontal="@dimen/app_margin"
         android:background="@drawable/background_search"
         android:imeOptions="actionNone"

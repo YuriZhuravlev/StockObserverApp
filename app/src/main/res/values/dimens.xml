@@ -3,4 +3,8 @@
     <dimen name="app_margin">8dp</dimen>
     <dimen name="title_margin">14dp</dimen>
     <dimen name="item_end_margin">10dp</dimen>
+    <dimen name="height_item_stock">68dp</dimen>
+    <dimen name="size_image_stock">52dp</dimen>
+    <dimen name="size_star">16dp</dimen>
+    <dimen name="height_search">40dp</dimen>
 </resources>

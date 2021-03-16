@@ -19,26 +19,22 @@
         <include
             android:id="@+id/chart_toolbar"
             layout="@layout/toolbar_chart"
-            app:layout_scrollInterpolator="@string/appbar_scrolling_view_behavior"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:layout_scrollInterpolator="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/main_tab"
+            style="@style/Theme.StockObserverApp.TabLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            app:tabGravity="start"
-            app:tabIndicatorHeight="0dp"
-            app:tabMode="fixed" />
+            android:layout_gravity="start" />
 
         <TextView
             android:id="@+id/main_text_info"
+            style="Theme.StockObserverApp.InfoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/design_default_color_error"
-            android:textAlignment="center"
-            android:textColor="@color/white"
             android:visibility="gone"
             app:layout_anchorGravity="bottom" />
     </com.google.android.material.appbar.AppBarLayout>

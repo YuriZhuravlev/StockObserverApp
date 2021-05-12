@@ -1,4 +1,5 @@
 # StockObserver
+[Why I did this?](/INFO.md)
 ### [EN]
 Application for monitoring shares on the Moscow Exchange. Prices are 20 minutes behind the current ones, but you can view interactive charts for a time period.
 
